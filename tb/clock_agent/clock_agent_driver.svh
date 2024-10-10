@@ -68,7 +68,7 @@ class clock_agent_driver#(
 
       // Print contents of the seq item
       `uvm_info("Clock Agent Driver", $sformatf("Seq Item:\n%s", txn.convert2string), UVM_HIGH)
-      
+
       // Do VIF task based on clock operation
       case(txn.clock_op)
         CLK_START: begin
@@ -80,11 +80,13 @@ class clock_agent_driver#(
             txn.phase_shift,
             txn.duty_cycle
           );
+          `uvm_info("Clock Agent Driver", $sformatf("Clock Started/Set"), UVM_HIGH)
         end
 
         CLK_STOP: begin
           // Stop clock
           m_vif.stop(txn.clock_sel);
+          `uvm_info("Clock Agent Driver", $sformatf("Clock Stopped"), UVM_HIGH)
         end
 
         default: begin
@@ -93,7 +95,8 @@ class clock_agent_driver#(
       endcase
 
       // Set Seq Item to Done
-      seq_item_port.item_done();
+      `uvm_info("Clock Agent Driver", "Seq Item Done", UVM_HIGH)
+      seq_item_port.item_done(txn);
     end
   endtask : run_phase
 

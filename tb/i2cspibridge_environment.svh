@@ -81,6 +81,7 @@ class i2cspibridge_environment extends uvm_env;
       m_cov = i2cspibridge_coverage::type_id::create("m_cov", this);
       `uvm_info("I2CSPIBRIDGE Env", "Coverage Built", UVM_HIGH)
     end
+    `uvm_info("I2CSPIBRIDGE Env", "Build Phase Finished", UVM_HIGH)
   endfunction : build_phase
 
   /******************************************************************************
@@ -88,6 +89,14 @@ class i2cspibridge_environment extends uvm_env;
   ******************************************************************************/
   virtual function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
+    `uvm_info("I2CSPIBRIDGE Env", "Start Connect Phase", UVM_HIGH)
+
+    // Connect vseqr to sub sequencers in agents
+    if(m_cfg.has_clock_agent) begin
+      m_vseqr.clock_seqr = m_clock_agent.m_seqr;
+    end
+
+    `uvm_info("I2CSPIBRIDGE Env", "Connect Phase Finished", UVM_HIGH)
   endfunction : connect_phase
 
 

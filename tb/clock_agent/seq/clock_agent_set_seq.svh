@@ -37,8 +37,7 @@ class clock_agent_set_seq#(
     // Create the sequence item
     command = SEQ_ITEM_T::type_id::create("command");
 
-    // Create clocks that have period CLK_PERIOD with init=1,
-    // no phase shift, and duty cycle of 50%
+    // Create clocks with defined settings in the variables
     start_item(command);
       command.clock_op = CLK_START;
       foreach(command.clock_sel[i]) begin

@@ -64,7 +64,9 @@ virtual class i2cspibridge_base_test extends uvm_test;
 
     phase.raise_objection(this);
       set_clock_seq.start(t_env.m_vseqr.clock_seqr);
+      #(T_CLK);
     phase.drop_objection(this);
+    $display("*********************************************************");
   endtask : pre_reset_phase
 
   /*****************************************************************

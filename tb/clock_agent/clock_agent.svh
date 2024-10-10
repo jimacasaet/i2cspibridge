@@ -56,6 +56,7 @@ class clock_agent#(
     if(get_is_active()==UVM_ACTIVE) begin
       m_driver = driver_t::type_id::create("m_driver", this);
       m_seqr   = seqr_t::type_id::create("m_seqr", this);
+      `uvm_info("Clock Agent Build Phase", "Driver and Sequencer Built", UVM_DEBUG)
     end
     `uvm_info("Clock Agent Build Phase", "Build Phase Finished", UVM_DEBUG)
   endfunction : build_phase
@@ -69,6 +70,7 @@ class clock_agent#(
     // Connect Driver to Sequencer Seq Item Export if UVM_ACTIVE
     if(get_is_active()==UVM_ACTIVE) begin
       m_driver.seq_item_port.connect(m_seqr.seq_item_export);
+      `uvm_info("Clock Agent Build Phase", "Driver Connected to Seqr Seq Item Export", UVM_DEBUG)
     end
     `uvm_info("Clock Agent Build Phase", "Connect Phase Finished", UVM_DEBUG)
   endfunction : connect_phase

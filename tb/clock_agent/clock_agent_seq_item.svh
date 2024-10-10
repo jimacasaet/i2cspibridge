@@ -38,7 +38,7 @@ class clock_agent_seq_item#(
   virtual function string convert2string();
     string s;
     foreach(clock_sel[i]) begin
-      $sformat(s, "%s op=%0s\tsel=%0d\tperiod=%0d\tinit=%0b\tpshift=%0d\tduty=%0d", 
+      $sformat(s, "%s op=%0s\tsel=%0d\tperiod=%0d\tinit=%0b\tpshift=%0d\tduty=%0d\n", 
                    s, clock_op.name, clock_sel[i], clock_period[i],
                    clock_init[i], phase_shift[i], duty_cycle[i]);
     end
