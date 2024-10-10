@@ -12,7 +12,7 @@ class clock_agent_start_seq#(
     realtime  CLK_PERIOD= 15ns,
     type      SEQ_ITEM_T= clock_agent_seq_item#(N_CLK)
 ) extends clock_agent_base_seq#(SEQ_ITEM_T);
-  `uvm_object_param_utils(clock_agent_start_seq)
+  `uvm_object_param_utils(clock_agent_start_seq#(N_CLK, CLK_PERIOD, SEQ_ITEM_T))
 
   /******************************************************
   *   FUNCTION: Constructor
@@ -42,7 +42,7 @@ class clock_agent_start_seq#(
         command.phase_shift [i] = 0;
         command.duty_cycle  [i] = 50;
       end
-    finish_item();
+    finish_item(command);
   endtask : body
   
 endclass : clock_agent_start_seq

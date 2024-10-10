@@ -16,7 +16,7 @@ virtual class i2cspibridge_base_test extends uvm_test;
   i2cspibridge_environment  t_env;
 
   // Instantiate Common Sequences
-  // clock_agent_
+  clock_agent_set_seq#(N_CLK, clock_seq_item_t)       set_clock_seq;
 
   /******************************************************************************
   *   FUNCTION: Constructor
@@ -48,6 +48,10 @@ virtual class i2cspibridge_base_test extends uvm_test;
 
     // Create new environment for testcase
     t_env = new("t_env", this);
+
+    // Build Sequences
+    set_clock_seq = clock_agent_set_seq#(N_CLK, clock_seq_item_t)::
+      type_id::create("set_clock_seq");
   endfunction : build_phase
 
   /******************************************************************************
@@ -56,8 +60,10 @@ virtual class i2cspibridge_base_test extends uvm_test;
   virtual task pre_reset_phase(uvm_phase phase);
     super.pre_reset_phase(phase);
 
-    phase.raise_objection(this);
+    set_clock();
 
+    phase.raise_objection(this);
+      set_clock_seq.start(t_env.m_vseqr.clock_seqr);
     phase.drop_objection(this);
   endtask : pre_reset_phase
 
@@ -97,6 +103,21 @@ virtual class i2cspibridge_base_test extends uvm_test;
       $write("%c[0m",27);
     end
   endfunction : report_phase
+
+  task set_clock();
+    // CLK (Main Clock)
+    set_clock_seq.clock_sel[CLK_CLK]    = 1;
+    set_clock_seq.clock_init[CLK_CLK]   = 1;
+    set_clock_seq.clock_period[CLK_CLK] = T_CLK;
+    set_clock_seq.phase_shift[CLK_CLK]  = 0;
+    set_clock_seq.duty_cycle[CLK_CLK]   = 50;
+    // SCL (I2C Clock)
+    set_clock_seq.clock_sel[CLK_SCL]    = 1;
+    set_clock_seq.clock_init[CLK_SCL]   = 1;
+    set_clock_seq.clock_period[CLK_SCL] = T_SCL;
+    set_clock_seq.phase_shift[CLK_SCL]  = 0;
+    set_clock_seq.duty_cycle[CLK_SCL]   = 50;
+  endtask : set_clock
 
 
 endclass : i2cspibridge_base_test

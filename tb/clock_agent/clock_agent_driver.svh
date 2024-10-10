@@ -63,8 +63,12 @@ class clock_agent_driver#(
 
     // Get transactions in a forever loop
     forever begin
+      // Get Seq Item 
+      seq_item_port.get_next_item(txn);
+
       // Print contents of the seq item
       `uvm_info("Clock Agent Driver", $sformatf("Seq Item:\n%s", txn.convert2string), UVM_HIGH)
+      
       // Do VIF task based on clock operation
       case(txn.clock_op)
         CLK_START: begin
@@ -87,6 +91,9 @@ class clock_agent_driver#(
           `uvm_fatal("Clock Agent Driver", "Unknown Clock Operation!")
         end
       endcase
+
+      // Set Seq Item to Done
+      seq_item_port.item_done();
     end
   endtask : run_phase
 
