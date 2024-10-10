@@ -52,7 +52,8 @@ interface clock_agent_if#(parameter N_CLK=1) ();
     realtime  phase_shift[N_CLK],
     int       duty_cycle [N_CLK]);
 
-    int duty[N_CLK-1];
+    int duty[N_CLK];
+    realtime delay[N_CLK];
 
     // Perform initial check for duty cycle
     foreach(duty_cycle[i]) begin
@@ -72,7 +73,7 @@ interface clock_agent_if#(parameter N_CLK=1) ();
         automatic int j = i;
 
         // If process has been started, kill the process
-        if(clk_proc[j].status() == process::RUNNING)
+        if(clk_proc[j] != null)
           clk_proc[j].kill();
 
         // Generate the clock in a fork..join_none
@@ -87,11 +88,15 @@ interface clock_agent_if#(parameter N_CLK=1) ();
             // Main clock gen in forever loop
             forever begin
               // Positive edge of clock
-              if(clk[j]) begin
+              if(clk[j]==1) begin
+                // delay[j] = (clk_period[j]*real'(duty[j]/100));
+                // `uvm_info("Clock Agent IF", "Clock", UVM_DEBUG)
                 #(clk_period[j]*real'(duty[j]/100));
+                
               // Negative edge of clock
-              end else
+              end else begin
                 #(clk_period[j]*real'((100-duty[j])/100));
+              end
               // Invert the clock
               clk[j] = ~clk[j];
             end // forever begin
@@ -100,6 +105,8 @@ interface clock_agent_if#(parameter N_CLK=1) ();
         join_none // fork 
       end
     end
+
+    `uvm_info("Clock Agent IF", "Start Task Finished", UVM_DEBUG)
 
   endtask : start
 
@@ -110,11 +117,13 @@ interface clock_agent_if#(parameter N_CLK=1) ();
   task stop(input clk_sel[N_CLK]);
     foreach(clk_sel[i]) begin
       automatic int j = i;
-      if(clk_sel[j] && clk_proc[j].status()==process::RUNNING) begin
+      if(clk_sel[j] && clk_proc[j]!= null) begin
         clk_proc[j].kill();
         clk_proc[j] = null;
       end
     end
+
+    `uvm_info("Clock Agent IF", "Stop Task Finished", UVM_DEBUG)
   endtask : stop
 
 endinterface : clock_agent_if
