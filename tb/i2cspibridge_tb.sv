@@ -82,7 +82,7 @@ module tb_i2cspibridge();
   I2CSPIBridge i_i2cspibridge(
     .CLK  ( m_clock_vif.clk[CLK_CLK]  ),
     .RST_N( ),
-    .SCL  ( m_clock_vif.clk[CLK_SCLK] ),
+    .SCL  ( m_clock_vif.clk[CLK_SCL]  ),
     .SDA  ( ),
     .MISO ( ),
     .SCLK ( ),

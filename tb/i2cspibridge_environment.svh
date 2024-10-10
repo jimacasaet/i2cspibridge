@@ -22,7 +22,7 @@ class i2cspibridge_environment extends uvm_env;
   // Scoreboard Instance
   i2cspibridge_sb                 m_sb;
   // Coverage Instance
-  // i2cspibridge_cov                m_cov;
+  i2cspibridge_coverage           m_cov;
 
   //###############################################
   //  Agent-related Instances
@@ -78,7 +78,7 @@ class i2cspibridge_environment extends uvm_env;
 
     // Build Coverage if defined in config
     if(m_cfg.has_coverage) begin 
-      //m_cov = i2cspibridge_cov::type_id::create("m_cov", this);
+      m_cov = i2cspibridge_coverage::type_id::create("m_cov", this);
       `uvm_info("I2CSPIBRIDGE Env", "Coverage Built", UVM_HIGH)
     end
   endfunction : build_phase

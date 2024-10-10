@@ -21,12 +21,12 @@ package i2cspibridge_uvm_pkg;
   `include "i2cspibridge_config.svh"
   `include "i2cspibridge_virtual_sequencer.svh"
   `include "i2cspibridge_sb.svh"
-  // `include "i2cspibridge_coverage.svh"
+  `include "i2cspibridge_coverage.svh"
   `include "i2cspibridge_environment.svh"
 
   // Sequence and Sequence Library
   `include "i2cspibridge_base_seq.svh"
-  // `include "i2cspibridge_seq_lib.svh"
+  `include "i2cspibridge_seq_lib.svh"
 
   // Base Test
   `include "i2cspibridge_base_test.svh"

@@ -1,9 +1,9 @@
 `ifndef _CLOCK_AGENT_BASE_SEQ_SVH
   `define _CLOCK_AGENT_BASE_SEQ_SVH
-virtual class clock_agent_base_seq#(
+class clock_agent_base_seq#(
     type SEQ_ITEM_T
   ) extends uvm_sequence#(SEQ_ITEM_T);
-  `uvm_object_param_utils(clock_agent_base_seq)
+  `uvm_object_param_utils(clock_agent_base_seq#(SEQ_ITEM_T))
 
   /******************************************************
   *   FUNCTION: Constructor
@@ -15,7 +15,9 @@ virtual class clock_agent_base_seq#(
   /******************************************************
   *   TASK: Body
   ******************************************************/
-  pure virtual task body();
+  virtual task body();
+
+  endtask : body
 
 endclass : clock_agent_base_seq
 `endif // _CLOCK_AGENT_BASE_SEQ_SVH

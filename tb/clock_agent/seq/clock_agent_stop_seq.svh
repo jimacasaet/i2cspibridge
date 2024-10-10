@@ -11,7 +11,7 @@ class clock_agent_stop_seq#(
     parameter N_CLK     = 1,
     type      SEQ_ITEM_T= clock_agent_seq_item#(N_CLK)
 ) extends clock_agent_base_seq#(SEQ_ITEM_T);
-  `uvm_object_param_utils(clock_agent_stop_seq)
+  `uvm_object_param_utils(clock_agent_stop_seq#(N_CLK, SEQ_ITEM_T))
 
   /******************************************************
   *   FUNCTION: Constructor
@@ -36,7 +36,7 @@ class clock_agent_stop_seq#(
       foreach(command.clock_sel[i]) begin
         command.clock_sel   [i] = 1;
       end
-    finish_item();
+    finish_item(command);
   endtask : body
   
 endclass : clock_agent_stop_seq

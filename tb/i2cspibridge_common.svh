@@ -16,7 +16,10 @@
   parameter N_CLK = 2;
   // Indices for clocks
   parameter CLK_CLK   = 0;
-  parameter CLK_SCLK  = 1;
+  parameter CLK_SCL   = 1;
+  // Clock Periods
+  parameter T_CLK     = 200ns;    // 5MHz
+  parameter T_SCL     = 10000ns;  // 100KHz
 
   //################################
   // Typedefs

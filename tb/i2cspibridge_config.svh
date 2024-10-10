@@ -12,16 +12,16 @@ class i2cspibridge_config extends uvm_component;
   `uvm_component_param_utils(i2cspibridge_config)
 
   // Configuration Variables
-  bit has_scoreboard;
-  bit has_coverage;
+  rand bit has_scoreboard;
+  rand bit has_coverage;
 
-  bit has_clock_agent;
+  rand bit has_clock_agent;
 
   // Define default constraints upon randomization
   constraint default_constraints{
     // Env Constraints
-    soft has_scoreboard   == 0;
-    soft has_coverage     == 0;
+    soft has_scoreboard   == 1;
+    soft has_coverage     == 1;
     // Agent Constraints
     soft has_clock_agent  == 1;
   };
