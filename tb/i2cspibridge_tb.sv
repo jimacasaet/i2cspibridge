@@ -8,7 +8,7 @@
 `ifndef _I2CSPIBRIDGE_TB_SV
   `define _I2CSPIBRIDGE_TB_SV
 
-`timescale 1ns/1fs
+`timescale 1ns/1ps
 module tb_i2cspibridge();
   `include "uvm_macros.svh"
   import uvm_pkg::*;
