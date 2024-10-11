@@ -27,7 +27,7 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
   *************************************************************/
   task body();
     super.body();
-    #200;
+    #(T_SCL*10);
     `uvm_info("I2CSPIBridge Sanity Test","Body Done", UVM_HIGH)
   endtask : body
   
