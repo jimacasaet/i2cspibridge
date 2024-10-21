@@ -1,6 +1,9 @@
 // Clock Agent 
 ../tb/clock_agent/clock_agent_pkg.sv
 ../tb/clock_agent/clock_agent_if.sv
+// GPIO Agent 
+../tb/gpio_agent/gpio_agent_pkg.sv
+../tb/gpio_agent/gpio_agent_if.sv
 // TB 
 ../tb/i2cspibridge_uvm_pkg.sv
 ../tb/tests/i2cspibridge_test_pkg.sv
@@ -12,3 +15,5 @@
 +incdir+../tb/tests/i2cspibridge_sanity_test/
 +incdir+../tb/clock_agent/
 +incdir+../tb/clock_agent/seq/
++incdir+../tb/gpio_agent/
++incdir+../tb/gpio_agent/seq/
