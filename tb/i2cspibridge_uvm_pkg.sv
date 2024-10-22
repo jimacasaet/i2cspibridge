@@ -14,6 +14,11 @@ package i2cspibridge_uvm_pkg;
   import clock_agent_pkg::*;
   import gpio_agent_pkg::*;
 
+  // TODO: DPI
+  // import "DPI-C" function void c_py_init();
+  // import "DPI-C" function void c_py_final();
+  // import "DPI-C" function void c_py_gen_packet(input bit[63:0] mode, output bit[2047:0] pkt, output bit [7:0] len);
+
   typedef class i2cspibridge_virtual_sequencer;
   typedef class i2cspibridge_config;
   typedef class i2cspibridge_sb;
