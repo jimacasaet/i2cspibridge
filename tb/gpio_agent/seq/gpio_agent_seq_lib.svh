@@ -4,5 +4,6 @@
   // Common Sequences
   `include "gpio_agent_base_seq.svh"
   `include "gpio_agent_set_seq.svh"
+  `include "gpio_agent_init_seq.svh"
 
 `endif // _GPIO_AGENT_SEQ_LIB_SVH

@@ -16,6 +16,9 @@ class i2cspibridge_config extends uvm_component;
   rand bit has_coverage;
 
   rand bit has_clock_agent;
+  rand bit has_reset_agent;
+  rand bit has_i2c_slv_agent;
+  rand bit has_spi_mst_agent;
 
   // Define default constraints upon randomization
   constraint default_constraints{
@@ -24,6 +27,9 @@ class i2cspibridge_config extends uvm_component;
     soft has_coverage     == 1;
     // Agent Constraints
     soft has_clock_agent  == 1;
+    soft has_reset_agent  == 1;
+    soft has_i2c_slv_agent== 1;
+    soft has_spi_mst_agent== 1;
   };
 
   /*********************************************************

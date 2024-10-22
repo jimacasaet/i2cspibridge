@@ -29,8 +29,10 @@ class i2cspibridge_environment extends uvm_env;
   //###############################################
   // Agents
   clock_agent_t         m_clock_agent;
+  reset_agent_t         m_reset_agent;
   // Agent Configs
   clock_agent_config    m_clock_agent_cfg;
+  gpio_agent_config     m_reset_agent_cfg;
 
   /******************************************************************************
   *   FUNCTION: Constructor
@@ -70,6 +72,22 @@ class i2cspibridge_environment extends uvm_env;
       `uvm_info("I2CSPIBRIDGE Env", "Clock Agent Config Set", UVM_HIGH)
     end
 
+    // Build Reset Agent if defined in config
+    if(m_cfg.has_reset_agent) begin
+      // Agent
+      m_reset_agent = reset_agent_t::type_id::create("m_reset_agent", this);
+      `uvm_info("I2CSPIBRIDGE Env", "Reset Agent Built", UVM_HIGH)
+      // Agent Config
+      m_reset_agent_cfg = gpio_agent_config::type_id::create("m_reset_agent_cfg", this);
+      m_reset_agent_cfg.set_active_passive(UVM_ACTIVE);
+      m_reset_agent_cfg.is_sync = 1;
+      `uvm_info("I2CSPIBRIDGE Env", "Reset Agent Config Built", UVM_HIGH)
+      // Set Config
+      uvm_config_db#(gpio_agent_config)
+        ::set(this, "m_reset_agent", "gpio_agent_config", m_reset_agent_cfg);
+      `uvm_info("I2CSPIBRIDGE Env", "Reset Agent Config Set", UVM_HIGH)
+    end
+
     // Build Scoreboard if defined in config
     if(m_cfg.has_scoreboard) begin
       m_sb = i2cspibridge_sb::type_id::create("m_sb", this);
@@ -94,6 +112,7 @@ class i2cspibridge_environment extends uvm_env;
     // Connect vseqr to sub sequencers in agents
     if(m_cfg.has_clock_agent) begin
       m_vseqr.clock_seqr = m_clock_agent.m_seqr;
+      m_vseqr.reset_seqr = m_reset_agent.m_seqr;
     end
 
     `uvm_info("I2CSPIBRIDGE Env", "Connect Phase Finished", UVM_HIGH)

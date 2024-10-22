@@ -17,6 +17,8 @@ virtual class i2cspibridge_base_test extends uvm_test;
 
   // Instantiate Common Sequences
   clock_agent_set_seq#(N_CLK, clock_seq_item_t)       set_clock_seq;
+  gpio_agent_init_seq#(RESET_WIDTH, N_RESET)          trig_reset_seq;
+  gpio_agent_set_seq#(RESET_WIDTH, N_RESET)           release_reset_seq;
 
   /******************************************************************************
   *   FUNCTION: Constructor
@@ -52,6 +54,11 @@ virtual class i2cspibridge_base_test extends uvm_test;
     // Build Sequences
     set_clock_seq = clock_agent_set_seq#(N_CLK, clock_seq_item_t)::
       type_id::create("set_clock_seq");
+    trig_reset_seq= gpio_agent_init_seq#(RESET_WIDTH, N_RESET)::
+      type_id::create("trig_reset_seq");
+    release_reset_seq = gpio_agent_set_seq#(RESET_WIDTH, N_RESET)::
+      type_id::create("release_reset_seq");
+
   endfunction : build_phase
 
   /******************************************************************************
@@ -60,13 +67,26 @@ virtual class i2cspibridge_base_test extends uvm_test;
   virtual task pre_reset_phase(uvm_phase phase);
     super.pre_reset_phase(phase);
 
+    // Set clock settings
     set_clock();
 
     phase.raise_objection(this);
       set_clock_seq.start(t_env.m_vseqr.clock_seqr);
+      trig_reset_seq.start(t_env.m_vseqr.reset_seqr);
     phase.drop_objection(this);
     $display("*********************************************************");
   endtask : pre_reset_phase
+
+  virtual task reset_phase(uvm_phase phase);
+    super.reset_phase(phase);
+
+    release_reset_seq.gpio_signal[RST_N] = 1'b1;
+
+    phase.raise_objection(this);
+      #(T_CLK);
+      release_reset_seq.start(t_env.m_vseqr.reset_seqr);
+    phase.drop_objection(this);
+  endtask : reset_phase
 
   /*****************************************************************
   *   FUNCTION: Report Phase
@@ -80,12 +100,12 @@ virtual class i2cspibridge_base_test extends uvm_test;
     if(m_server.get_severity_count(UVM_FATAL)+m_server.get_severity_count(UVM_ERROR) > 0) begin
       $display("%c[1;31m",27);
       $display("###############################");
-      $display("# ███████╗ █████╗ ██╗██╗      #");
-      $display("# ██╔════╝██╔══██╗██║██║      #");
-      $display("# █████╗  ███████║██║██║      #");
-      $display("# ██╔══╝  ██╔══██║██║██║      #");
-      $display("# ██║     ██║  ██║██║███████╗ #");
-      $display("# ╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝ #");
+      $display("# ███████╗  █████╗  ██╗ ██╗      #");
+      $display("# ██╔════╝ ██╔══██╗ ██║ ██║      #");
+      $display("# █████╗   ███████║ ██║ ██║      #");
+      $display("# ██╔══╝   ██╔══██║ ██║ ██║      #");
+      $display("# ██║      ██║  ██║ ██║ ███████╗ #");
+      $display("# ╚═╝      ╚═╝  ╚═╝ ╚═╝ ╚══════╝ #");
       $display("###############################");
       $write("%c[0m",27);
     end else begin
@@ -94,17 +114,20 @@ virtual class i2cspibridge_base_test extends uvm_test;
       else
         $display("%c[1;32m",27);
       $display("####################################");
-      $display("# ██████╗  █████╗ ███████╗███████╗ #");
-      $display("# ██╔══██╗██╔══██╗██╔════╝██╔════╝ #");
-      $display("# ██████╔╝███████║███████╗███████╗ #");
-      $display("# ██╔═══╝ ██╔══██║╚════██║╚════██║ #");
-      $display("# ██║     ██║  ██║███████║███████║ #");
-      $display("# ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝ #");
+      $display("# ██████╗   █████╗  ███████╗ ███████╗ #");
+      $display("# ██╔══██╗ ██╔══██╗ ██╔════╝ ██╔════╝ #");
+      $display("# ██████╔╝ ███████║ ███████╗ ███████╗ #");
+      $display("# ██╔═══╝  ██╔══██║ ╚════██║ ╚════██║ #");
+      $display("# ██║      ██║  ██║ ███████║ ███████║ #");
+      $display("# ╚═╝      ╚═╝  ╚═╝ ╚══════╝ ╚══════╝ #");
       $display("####################################");
       $write("%c[0m",27);
     end
   endfunction : report_phase
 
+  /****************************************************
+  *   TASK: Set Clock Settings 
+  ****************************************************/
   task set_clock();
     // CLK (Main Clock)
     set_clock_seq.clock_sel[CLK_CLK]    = 1;

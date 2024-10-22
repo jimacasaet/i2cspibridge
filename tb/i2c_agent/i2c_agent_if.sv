@@ -2,13 +2,13 @@
 // Create Date  :   2024-10-09
 // Author       :   John Rufino Macasaet
 // E-Mail       :   j_macasaet@vtech-inc.co.jp
-// File Name    :   gpio_agent_if.sv
-// Description  :   GPIO Agent Interface
+// File Name    :   i2c_agent_if.sv
+// Description  :   I2C Agent Interface
 //-------------------------------------------------------------
-`ifndef _GPIO_AGENT_AGENT_IF_SV
-  `define _GPIO_AGENT_AGENT_IF_SV
+`ifndef _I2C_AGENT_AGENT_IF_SV
+  `define _I2C_AGENT_AGENT_IF_SV
 
-interface gpio_agent_if#(
+interface i2c_agent_if#(
   parameter SIGNAL_WIDTH = 1, 
   parameter N_SIGNAL     = 1
   ) (input clk_i);
@@ -16,53 +16,53 @@ interface gpio_agent_if#(
   `include "uvm_macros.svh"
 
   // Logic array for the clocks
-  logic [SIGNAL_WIDTH-1:0] gpio_signal [N_SIGNAL];
+  logic [SIGNAL_WIDTH-1:0] i2c_signal [N_SIGNAL];
 
   /************************************************************
   *  CLOCKING BLOCK
   ************************************************************/
-  clocking gpio_cb @(posedge clk_i);
-    input #0 output #0 gpio_signal;
-  endclocking : gpio_cb
+  clocking i2c_cb @(posedge clk_i);
+    input #0 output #0 i2c_signal;
+  endclocking : i2c_cb
 
   /************************************************************
-  *  TASK: Write to GPIO
+  *  TASK: Write to I2C
   ************************************************************/
-  task write_gpio(input [SIGNAL_WIDTH-1:0] gpio_input [N_SIGNAL], input is_sync, realtime delay [N_SIGNAL]);
+  task write_i2c(input [SIGNAL_WIDTH-1:0] i2c_input [N_SIGNAL], input is_sync, realtime delay [N_SIGNAL]);
     // If synchronous, wait clock edge
     if(is_sync)
-      @(gpio_cb);
+      @(i2c_cb);
 
-    foreach(gpio_input[i])
-      gpio_signal[i] <= gpio_input[i];
-  endtask : write_gpio
-
-  /************************************************************
-  *  TASK: Initialize GPIO
-  ************************************************************/
-  task init_gpio(input [SIGNAL_WIDTH-1:0] gpio_input [N_SIGNAL]);
-    foreach(gpio_input[i])
-      gpio_signal[i] <= gpio_input[i];
-  endtask : init_gpio
+    foreach(i2c_input[i])
+      i2c_signal[i] <= i2c_input[i];
+  endtask : write_i2c
 
   /************************************************************
-  *  TASK: Read GPIO
+  *  TASK: Initialize I2C
   ************************************************************/
-  task read_gpio(output [SIGNAL_WIDTH-1:0] gpio_output [N_SIGNAL], input is_sync);
+  task init_i2c(input [SIGNAL_WIDTH-1:0] i2c_input [N_SIGNAL]);
+    foreach(i2c_input[i])
+      i2c_signal[i] <= i2c_input[i];
+  endtask : init_i2c
+
+  /************************************************************
+  *  TASK: Read I2C
+  ************************************************************/
+  task read_i2c(output [SIGNAL_WIDTH-1:0] i2c_output [N_SIGNAL], input is_sync);
     // If synchronous, wait clock edge
     if(is_sync)
-      @(gpio_cb);
+      @(i2c_cb);
 
-    foreach(gpio_output[i]) begin
+    foreach(i2c_output[i]) begin
       automatic int j = i;
       fork 
         begin
-          gpio_output[j] <= gpio_signal[j];
+          i2c_output[j] <= i2c_signal[j];
         end
       join
     end
-  endtask : read_gpio
+  endtask : read_i2c
 
-endinterface : gpio_agent_if
+endinterface : i2c_agent_if
 
-`endif //_GPIO_AGENT_AGENT_IF_SV
+`endif //_I2C_AGENT_AGENT_IF_SV
