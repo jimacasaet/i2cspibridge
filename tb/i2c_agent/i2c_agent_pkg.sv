@@ -21,9 +21,13 @@ package i2c_agent_pkg;
   `include "i2c_agent_config.svh"
   `include "i2c_agent_seq_item.svh"
   `include "i2c_agent_sequencer.svh"
-  `include "i2c_agent_driver.svh"
   `include "i2c_agent_monitor.svh"
-  `include "i2c_agent.svh"
+  `include "i2c_master_agent_driver.svh"
+  `include "i2c_master_agent_config.svh"
+  `include "i2c_master_agent.svh"
+  `include "i2c_slave_agent_driver.svh"
+  `include "i2c_slave_agent_config.svh"
+  `include "i2c_slave_agent.svh"
 
   // Common Sequences
   `include "i2c_agent_seq_lib.svh"

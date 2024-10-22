@@ -99,28 +99,28 @@ virtual class i2cspibridge_base_test extends uvm_test;
 
     if(m_server.get_severity_count(UVM_FATAL)+m_server.get_severity_count(UVM_ERROR) > 0) begin
       $display("%c[1;31m",27);
-      $display("###############################");
+      $display("##################################");
       $display("# ███████╗  █████╗  ██╗ ██╗      #");
       $display("# ██╔════╝ ██╔══██╗ ██║ ██║      #");
       $display("# █████╗   ███████║ ██║ ██║      #");
       $display("# ██╔══╝   ██╔══██║ ██║ ██║      #");
       $display("# ██║      ██║  ██║ ██║ ███████╗ #");
       $display("# ╚═╝      ╚═╝  ╚═╝ ╚═╝ ╚══════╝ #");
-      $display("###############################");
+      $display("##################################");
       $write("%c[0m",27);
     end else begin
       if(m_server.get_severity_count(UVM_WARNING)>0)
         $display("%c[1;33m",27);
       else
         $display("%c[1;32m",27);
-      $display("####################################");
+      $display("#######################################");
       $display("# ██████╗   █████╗  ███████╗ ███████╗ #");
       $display("# ██╔══██╗ ██╔══██╗ ██╔════╝ ██╔════╝ #");
       $display("# ██████╔╝ ███████║ ███████╗ ███████╗ #");
       $display("# ██╔═══╝  ██╔══██║ ╚════██║ ╚════██║ #");
       $display("# ██║      ██║  ██║ ███████║ ███████║ #");
       $display("# ╚═╝      ╚═╝  ╚═╝ ╚══════╝ ╚══════╝ #");
-      $display("####################################");
+      $display("#######################################");
       $write("%c[0m",27);
     end
   endfunction : report_phase

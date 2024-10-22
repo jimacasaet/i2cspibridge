@@ -1,9 +1,9 @@
-PYTHON_PATH := `../tb/dpi && pwd`
-C_INC := `../tb/dpi && pwd`
-C_SRC := `../tb/dpi && pwd`
+PYTHON_PATH := $(shell cd ../tb/dpi && pwd)
+C_INC := $(shell cd ../tb/dpi && pwd)
+C_SRC := $(shell cd ../tb/dpi && pwd)
 
-VCS_CFLAG := -CC `pkg-config --cflags python3` -CC -I$(C_INC) -CC -D'PYTHON_PATH=\"$(PYTHON_PATH)\"'
-VCS_LDFLAG := -LDFLAGS -Wl,--no-as-needed -LDFLAGS `pkg-config --libs python3`
+VCS_CFLAG := -CC $(shell pkg-config --cflags python3) -CC -I$(C_INC) -CC -D'PYTHON_PATH=\"$(PYTHON_PATH)\"'
+VCS_LDFLAG := -LDFLAGS -Wl,--no-as-needed -LDFLAGS $(shell pkg-config --libs python3)
 
 all: clean compile_uvm run_sim
 
