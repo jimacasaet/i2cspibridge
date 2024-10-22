@@ -15,6 +15,7 @@ module tb_i2cspibridge();
 
   // Import Agent Packages
   import clock_agent_pkg::*;
+  import gpio_agent_pkg::*;
 
   import i2cspibridge_uvm_pkg::*;
   import i2cspibridge_test_pkg::*;
@@ -34,12 +35,20 @@ module tb_i2cspibridge();
     .N_CLK(N_CLK)
   ) m_clock_vif();
 
+  gpio_agent_if #(
+    .SIGNAL_WIDTH(RESET_WIDTH ),
+    .N_SIGNAL    (N_RESET     )
+  ) m_reset_vif (.clk_i(m_clock_vif.clk[CLK_CLK]));
+
   //###########################################
   //  Set the VIF using uvm_config_db
   //###########################################
   initial begin
     uvm_config_db #(virtual clock_agent_if#(N_CLK))::
       set(null, "*", "clock_agent_if", m_clock_vif);
+
+    uvm_config_db #(virtual gpio_agent_if#(RESET_WIDTH, N_RESET))::
+      set(null, "uvm_test_top.t_env.m_reset_agent.*", "gpio_agent_if", m_reset_vif);
     
     run_test();
   end // initial begin
@@ -80,9 +89,9 @@ module tb_i2cspibridge();
   //  Instantiate Design
   //###########################################
   I2CSPIBridge i_i2cspibridge(
-    .CLK  ( m_clock_vif.clk[CLK_CLK]  ),
-    .RST_N( ),
-    .SCL  ( m_clock_vif.clk[CLK_SCL]  ),
+    .CLK  ( m_clock_vif.clk[CLK_CLK]      ),
+    .RST_N( m_reset_vif.gpio_signal[RST_N]),
+    .SCL  ( m_clock_vif.clk[CLK_SCL]      ),
     .SDA  ( ),
     .MISO ( ),
     .SCLK ( ),

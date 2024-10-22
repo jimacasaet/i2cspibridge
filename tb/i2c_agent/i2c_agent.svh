@@ -2,28 +2,28 @@
 // Create Date  :   2024-10-09
 // Author       :   John Rufino Macasaet
 // E-Mail       :   j_macasaet@vtech-inc.co.jp
-// File Name    :   gpio_agent.svh
-// Description  :   GPIO Agent 
+// File Name    :   i2c_agent.svh
+// Description  :   I2C Agent 
 //-------------------------------------------------------------
-`ifndef _GPIO_AGENT_SVH
-  `define _GPIO_AGENT_SVH
+`ifndef _I2C_AGENT_SVH
+  `define _I2C_AGENT_SVH
 
-class gpio_agent#(
+class i2c_agent#(
     parameter SIGNAL_WIDTH = 1,
     parameter N_SIGNAL     = 1,
-    type      SEQ_ITEM_T   = gpio_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL)
+    type      SEQ_ITEM_T   = i2c_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL)
   ) extends uvm_agent;
 
   // Register to factory
-  `uvm_component_param_utils(gpio_agent#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T))
+  `uvm_component_param_utils(i2c_agent#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T))
 
   // Instantiate config
-  gpio_agent_config  m_cfg;
+  i2c_agent_config  m_cfg;
 
   // Create component typedefs
-  typedef gpio_agent_driver#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T)   driver_t;
-  typedef gpio_agent_sequencer #(SEQ_ITEM_T)                       seqr_t;  
-  typedef gpio_agent_monitor#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T)  monitor_t;
+  typedef i2c_agent_driver#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T)   driver_t;
+  typedef i2c_agent_sequencer #(SEQ_ITEM_T)                       seqr_t;  
+  typedef i2c_agent_monitor#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T)  monitor_t;
 
   // Instantiate components
   driver_t                        m_driver;  
@@ -36,7 +36,7 @@ class gpio_agent#(
   /************************************************************
   *   FUNCTION: Constructor
   *************************************************************/
-  function new(string name="gpio_agent", uvm_component parent=null);
+  function new(string name="i2c_agent", uvm_component parent=null);
     super.new(name, parent);
   endfunction : new
 
@@ -45,15 +45,15 @@ class gpio_agent#(
   *************************************************************/
   virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    `uvm_info("GPIO Agent Build Phase", "Starting Build Phase", UVM_DEBUG)
+    `uvm_info("I2C Agent Build Phase", "Starting Build Phase", UVM_DEBUG)
 
     // Build analysis port
     m_ap = new( "m_ap", this );
 
     // Check that config has been set
-    assert(uvm_config_db#(gpio_agent_config)::get(this, "", "gpio_agent_config", m_cfg))
+    assert(uvm_config_db#(i2c_agent_config)::get(this, "", "i2c_agent_config", m_cfg))
     else
-      `uvm_fatal("GPIO Agent", "Failed to get the configuration object")
+      `uvm_fatal("I2C Agent", "Failed to get the configuration object")
     
     // Set agent type from config object
     this.is_active = m_cfg.get_active_passive();
@@ -62,7 +62,7 @@ class gpio_agent#(
     if(get_is_active()==UVM_ACTIVE) begin
       m_driver = driver_t::type_id::create("m_driver", this);
       m_seqr   = seqr_t::type_id::create("m_seqr", this);
-      `uvm_info("GPIO Agent Build Phase", "Driver and Sequencer Built", UVM_DEBUG)
+      `uvm_info("I2C Agent Build Phase", "Driver and Sequencer Built", UVM_DEBUG)
     end
     // Build monitor
     m_monitor = monitor_t::type_id::create("m_monitor", this);
@@ -71,7 +71,7 @@ class gpio_agent#(
     m_driver.m_cfg  = m_cfg;
     m_monitor.m_cfg = m_cfg;
 
-    `uvm_info("GPIO Agent Build Phase", "Build Phase Finished", UVM_DEBUG)
+    `uvm_info("I2C Agent Build Phase", "Build Phase Finished", UVM_DEBUG)
   endfunction : build_phase
 
   /************************************************************
@@ -79,18 +79,18 @@ class gpio_agent#(
   *************************************************************/
   virtual function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    `uvm_info("GPIO Agent Connect Phase", "Starting Connect Phase", UVM_DEBUG)
+    `uvm_info("I2C Agent Connect Phase", "Starting Connect Phase", UVM_DEBUG)
 
     m_monitor.m_ap.connect(m_ap);
-    `uvm_info("GPIO Agent Connect Phase", "Mon Connected to AP", UVM_DEBUG)
+    `uvm_info("I2C Agent Connect Phase", "Mon Connected to AP", UVM_DEBUG)
 
     // Connect Driver to Sequencer Seq Item Export if UVM_ACTIVE
     if(get_is_active()==UVM_ACTIVE) begin
       m_driver.seq_item_port.connect(m_seqr.seq_item_export);
-      `uvm_info("GPIO Agent Connect Phase", "Driver Connected to Seq Item Export", UVM_DEBUG)
+      `uvm_info("I2C Agent Connect Phase", "Driver Connected to Seq Item Export", UVM_DEBUG)
     end
-    `uvm_info("GPIO Agent Connect Phase", "Connect Phase Finished", UVM_DEBUG)
+    `uvm_info("I2C Agent Connect Phase", "Connect Phase Finished", UVM_DEBUG)
   endfunction : connect_phase
-endclass : gpio_agent
+endclass : i2c_agent
 
-`endif //_GPIO_AGENT_SVH
+`endif //_I2C_AGENT_SVH

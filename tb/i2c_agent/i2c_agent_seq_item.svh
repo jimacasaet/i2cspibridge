@@ -2,24 +2,24 @@
 // Create Date  :   2024-10-09
 // Author       :   John Rufino Macasaet
 // E-Mail       :   j_macasaet@vtech-inc.co.jp
-// File Name    :   gpio_agent_seq_item.svh
-// Description  :   GPIO Agent Sequence Item
+// File Name    :   i2c_agent_seq_item.svh
+// Description  :   I2C Agent Sequence Item
 //-------------------------------------------------------------
-`ifndef _GPIO_AGENT_SEQ_ITEM_SVH
-  `define _GPIO_AGENT_SEQ_ITEM_SVH
+`ifndef _I2C_AGENT_SEQ_ITEM_SVH
+  `define _I2C_AGENT_SEQ_ITEM_SVH
 
-class gpio_agent_seq_item#(
+class i2c_agent_seq_item#(
     parameter SIGNAL_WIDTH = 1,
     parameter N_SIGNAL     = 1
   ) extends uvm_sequence_item;
 
   // Register seq item to factory
-  `uvm_object_param_utils(gpio_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL))
+  `uvm_object_param_utils(i2c_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL))
 
   // Seq item variable definitions
-  gpio_op_e                 gpio_op;                // GPIO operation
-  logic [SIGNAL_WIDTH-1:0]  gpio_signal [N_SIGNAL]; // GPIO select
-  realtime                  delay       [N_SIGNAL]; // GPIO Async delay
+  i2c_op_e                 i2c_op;                // I2C operation
+  logic [SIGNAL_WIDTH-1:0]  i2c_signal [N_SIGNAL]; // I2C select
+  realtime                  delay       [N_SIGNAL]; // I2C Async delay
 
   /*********************************************************
   *   FUNCTION: Constructor
@@ -35,14 +35,14 @@ class gpio_agent_seq_item#(
   **********************************************************/
   virtual function string convert2string();
     string s;
-    $sformat(s, "op=%s ", gpio_op.name);
-    foreach(gpio_signal[i]) begin
+    $sformat(s, "op=%s ", i2c_op.name);
+    foreach(i2c_signal[i]) begin
       $sformat(s, "%s signal[%0d]=%0h ", 
-                   s, i, gpio_signal[i]);
+                   s, i, i2c_signal[i]);
     end
     return s;
   endfunction : convert2string
 
-endclass : gpio_agent_seq_item
+endclass : i2c_agent_seq_item
 
-`endif //_GPIO_AGENT_SEQ_ITEM_SVH
+`endif //_I2C_AGENT_SEQ_ITEM_SVH

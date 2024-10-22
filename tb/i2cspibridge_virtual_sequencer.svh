@@ -16,6 +16,7 @@ class i2cspibridge_virtual_sequencer extends uvm_virtual_sequencer;
   
   // Declare subsequencer handles
   clock_seqr_t          clock_seqr;
+  reset_seqr_t          reset_seqr;
 
   /*********************************************************
   *   FUNCTION: Constructor

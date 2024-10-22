@@ -1,19 +1,19 @@
-class gpio_agent_monitor#(
+class i2c_agent_monitor#(
     parameter SIGNAL_WIDTH = 1,
     parameter N_SIGNAL     = 1,
-    type      SEQ_ITEM_T   = gpio_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL)
+    type      SEQ_ITEM_T   = i2c_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL)
   ) extends uvm_monitor;
   // Register mon to factory
-  `uvm_component_param_utils(gpio_agent_monitor#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T))
+  `uvm_component_param_utils(i2c_agent_monitor#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T))
 
   // Analysis port instance
   uvm_analysis_port#(SEQ_ITEM_T)  m_ap;
 
   // Configuration instance
-  gpio_agent_config               m_cfg;
+  i2c_agent_config               m_cfg;
 
   // VIF instance
-  virtual gpio_agent_if#(SIGNAL_WIDTH, N_SIGNAL)  m_vif;
+  virtual i2c_agent_if#(SIGNAL_WIDTH, N_SIGNAL)  m_vif;
 
   /***********************************************************************************
   *   FUNCTION: Constructor
@@ -36,33 +36,33 @@ class gpio_agent_monitor#(
   virtual function void start_of_simulation_phase(uvm_phase phase);
     super.start_of_simulation_phase(phase);
     // Retrieve the virtual interface
-    assert(uvm_config_db#(virtual gpio_agent_if#(SIGNAL_WIDTH, N_SIGNAL))
-      ::get(this, "", "gpio_agent_if", m_vif))
+    assert(uvm_config_db#(virtual i2c_agent_if#(SIGNAL_WIDTH, N_SIGNAL))
+      ::get(this, "", "i2c_agent_if", m_vif))
     else  
-      `uvm_fatal("GPIO Agent Driver", "Unable to retrieve GPIO VIF!")
+      `uvm_fatal("I2C Agent Driver", "Unable to retrieve I2C VIF!")
     
-    `uvm_info("GPIO Monitor", "VIF Set", UVM_DEBUG)
+    `uvm_info("I2C Monitor", "VIF Set", UVM_DEBUG)
   endfunction : start_of_simulation_phase
   
   /***********************************************************************************
   *   TASK: Run Phase
   ***********************************************************************************/
   virtual task run_phase(uvm_phase phase);
-    // Instantiate gpio transactions
-    SEQ_ITEM_T    gpio_txn;
+    // Instantiate i2c transactions
+    SEQ_ITEM_T    i2c_txn;
 
     super.run_phase(phase);
 
     forever begin
       // Create txn
-      gpio_txn = new("gpio_txn");
+      i2c_txn = new("i2c_txn");
       // Read txn from VIF
-      m_vif.read_gpio(gpio_txn.gpio_signal, m_cfg.is_sync);
+      m_vif.read_i2c(i2c_txn.i2c_signal, m_cfg.is_sync);
       // Write to AP
-      m_ap.write(gpio_txn);
+      m_ap.write(i2c_txn);
       // Print contents of txn
-      `uvm_info("GPIO Mon Run", gpio_txn.convert2string(), UVM_DEBUG)
+      `uvm_info("I2C Mon Run", i2c_txn.convert2string(), UVM_DEBUG)
     end
   endtask : run_phase
 
-endclass : gpio_agent_monitor
+endclass : i2c_agent_monitor

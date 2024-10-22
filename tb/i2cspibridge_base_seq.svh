@@ -21,6 +21,7 @@ class i2cspibridge_base_seq extends uvm_sequence;
 
   // Declare subsequencer handles
   clock_seqr_t        clock_seqr;
+  reset_seqr_t        reset_seqr;
 
   /************************************************************
   *   FUNCTION: Constructor
@@ -35,6 +36,7 @@ class i2cspibridge_base_seq extends uvm_sequence;
   virtual task body();
     // Connect sub-sequencer instances to p_sequencer 
     clock_seqr = p_sequencer.clock_seqr;
+    reset_seqr = p_sequencer.reset_seqr;
     // Set environment config
     m_cfg = p_sequencer.m_cfg;
   endtask : body

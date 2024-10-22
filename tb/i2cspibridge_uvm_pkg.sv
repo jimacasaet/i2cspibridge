@@ -12,6 +12,7 @@ package i2cspibridge_uvm_pkg;
   import uvm_pkg::*;
 
   import clock_agent_pkg::*;
+  import gpio_agent_pkg::*;
 
   typedef class i2cspibridge_virtual_sequencer;
   typedef class i2cspibridge_config;

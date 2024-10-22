@@ -9,9 +9,9 @@
   `define _GPIO_AGENT_DRIVER_SVH
 
 class gpio_agent_driver#(
-    parameter SIGNAL_WIDTH,
-    parameter N_SIGNAL,
-    type      SEQ_ITEM_T
+    parameter SIGNAL_WIDTH = 1,
+    parameter N_SIGNAL     = 1,
+    type      SEQ_ITEM_T   = gpio_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL)
   ) extends uvm_driver#(SEQ_ITEM_T);
   // Register to the factory
   `uvm_component_param_utils(gpio_agent_driver#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T))
@@ -41,15 +41,15 @@ class gpio_agent_driver#(
   *************************************************************/
   virtual function void start_of_simulation_phase(uvm_phase phase);
     super.start_of_simulation_phase(phase);
-    `uvm_info("GPIO Agent Driver", "Starting Connect Phase", UVM_DEBUG)
+    `uvm_info("GPIO Agent Driver", "Starting Start of Sim Phase", UVM_DEBUG)
 
     // Retrieve the virtual interface
     assert(uvm_config_db#(virtual gpio_agent_if#(SIGNAL_WIDTH, N_SIGNAL))
-      ::get(null, "", "gpio_agent_if", m_vif))
+      ::get(this, "", "gpio_agent_if", m_vif))
     else  
       `uvm_fatal("GPIO Agent Driver", "Unable to retrieve GPIO VIF!")
     
-    `uvm_info("GPIO Agent Driver", "Connect Phase Finished", UVM_DEBUG)
+    `uvm_info("GPIO Agent Driver", "Start of Sim Phase Finished", UVM_DEBUG)
   endfunction : start_of_simulation_phase
 
   /************************************************************
@@ -73,13 +73,11 @@ class gpio_agent_driver#(
       // Do VIF task based on clock operation
       case(txn.gpio_op)
         GPIO_WRITE: begin
-          // Start clock with settings in seq item
-          m_vif.write_gpio(txn.gpio_signal);
+          m_vif.write_gpio(txn.gpio_signal, m_cfg.is_sync, txn.delay);
           `uvm_info("GPIO Agent Driver", $sformatf("Written to GPIO"), UVM_DEBUG)
         end
 
         GPIO_INIT: begin
-          // Stop clock
           m_vif.init_gpio(txn.gpio_signal);
           `uvm_info("GPIO Agent Driver", $sformatf("GPIO Initialized"), UVM_DEBUG)
         end
