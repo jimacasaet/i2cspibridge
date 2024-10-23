@@ -13,9 +13,10 @@ package i2c_agent_pkg;
   `include "uvm_macros.svh"
 
   // Typedef enum for clock operations
-  typedef enum logic {
-    I2C_WRITE = 1'b0,   // I2C Write Values
-    I2C_INIT  = 1'b1    // I2C Initialize Values
+  typedef enum {
+    I2C_SEND_START,   // I2C Send Address + RW bit
+    I2C_WRITE_BYTE,   // I2c Send Data Byte
+    I2C_WRITE_BIT     // I2C Send Data Bit
   } i2c_op_e;
 
   `include "i2c_agent_config.svh"
