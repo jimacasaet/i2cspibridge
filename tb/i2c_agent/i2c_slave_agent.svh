@@ -9,21 +9,21 @@
   `define _I2C_SLAVE_AGENT_SVH
 
 class i2c_slave_agent#(
-    parameter SIGNAL_WIDTH = 1,
-    parameter N_SIGNAL     = 1,
-    type      SEQ_ITEM_T   = i2c_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL)
+    parameter BYTE_SIZE = 8,
+    parameter ADDR_SIZE = BYTE_SIZE-1,
+    type      SEQ_ITEM_T   = i2c_agent_seq_item#(BYTE_SIZE, ADDR_SIZE)
   ) extends uvm_agent;
 
   // Register to factory
-  `uvm_component_param_utils(i2c_slave_agent#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T))
+  `uvm_component_param_utils(i2c_slave_agent#(BYTE_SIZE, ADDR_SIZE, SEQ_ITEM_T))
 
   // Instantiate config
   i2c_slave_agent_config  m_cfg;
 
   // Create component typedefs
-  typedef i2c_slave_agent_driver#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T)   driver_t;
-  typedef i2c_agent_sequencer #(SEQ_ITEM_T)                       seqr_t;  
-  typedef i2c_agent_monitor#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T)  monitor_t;
+  typedef i2c_slave_agent_driver#(BYTE_SIZE, ADDR_SIZE, SEQ_ITEM_T)   driver_t;
+  typedef i2c_agent_sequencer #(SEQ_ITEM_T)                           seqr_t;  
+  typedef i2c_agent_monitor#(BYTE_SIZE, ADDR_SIZE, SEQ_ITEM_T)        monitor_t;
 
   // Instantiate components
   driver_t                        m_driver;  

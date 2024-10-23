@@ -9,15 +9,15 @@
   `define _I2C_SLAVE_AGENT_DRIVER_SVH
 
 class i2c_slave_agent_driver#(
-    parameter SIGNAL_WIDTH = 1,
-    parameter N_SIGNAL     = 1,
-    type      SEQ_ITEM_T   = i2c_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL)
+    parameter BYTE_SIZE = 8,
+    parameter ADDR_SIZE = BYTE_SIZE-1,
+    type      SEQ_ITEM_T   = i2c_agent_seq_item#(BYTE_SIZE, ADDR_SIZE)
   ) extends uvm_driver#(SEQ_ITEM_T);
   // Register to the factory
-  `uvm_component_param_utils(i2c_slave_agent_driver#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T))
+  `uvm_component_param_utils(i2c_slave_agent_driver#(BYTE_SIZE, ADDR_SIZE, SEQ_ITEM_T))
 
   // Handle to the virtual interface
-  virtual i2c_agent_if#(SIGNAL_WIDTH, N_SIGNAL) m_vif;
+  virtual i2c_agent_if#(BYTE_SIZE, ADDR_SIZE) m_vif;
 
   // Handle to the config object
   i2c_agent_config             m_cfg;
@@ -44,7 +44,7 @@ class i2c_slave_agent_driver#(
     `uvm_info("I2C Slave Agent Driver", "Starting Start of Sim Phase", UVM_DEBUG)
 
     // Retrieve the virtual interface
-    assert(uvm_config_db#(virtual i2c_agent_if#(SIGNAL_WIDTH, N_SIGNAL))
+    assert(uvm_config_db#(virtual i2c_agent_if#(BYTE_SIZE, ADDR_SIZE))
       ::get(this, "", "i2c_agent_if", m_vif))
     else  
       `uvm_fatal("I2C Slave Agent Driver", "Unable to retrieve I2C VIF!")
@@ -72,14 +72,19 @@ class i2c_slave_agent_driver#(
 
       // Do VIF task based on clock operation
       case(txn.i2c_op)
-        I2C_WRITE: begin
+        I2C_SEND_START: begin
           m_vif.write_i2c(txn.i2c_signal, m_cfg.is_sync, txn.delay);
-          `uvm_info("I2C Slave Agent Driver", $sformatf("Written to I2C"), UVM_DEBUG)
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Start Byte"), UVM_DEBUG)
         end
 
-        I2C_INIT: begin
+        I2C_WRITE_BYTE: begin
           m_vif.init_i2c(txn.i2c_signal);
-          `uvm_info("I2C Slave Agent Driver", $sformatf("I2C Initialized"), UVM_DEBUG)
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Data Byte"), UVM_DEBUG)
+        end
+
+        I2C_WRITE_BIT: begin
+          m_vif.init_i2c(txn.i2c_signal);
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Data Bit"), UVM_DEBUG)
         end
 
         default: begin

@@ -8,60 +8,100 @@
 `ifndef _I2C_AGENT_AGENT_IF_SV
   `define _I2C_AGENT_AGENT_IF_SV
 
-interface i2c_agent_if#(
-  parameter SIGNAL_WIDTH = 1, 
-  parameter N_SIGNAL     = 1
-  ) (input clk_i);
+interface i2c_agent_if#(parameter BYTE_SIZE = 8,
+                        parameter ADDR_SIZE = BYTE_SIZE-1)
+                       (input scl, 
+                        inout sda
+                       );
   import uvm_pkg::*;
   `include "uvm_macros.svh"
 
   // Logic array for the clocks
-  logic [SIGNAL_WIDTH-1:0] i2c_signal [N_SIGNAL];
+  logic sda_in;
+  logic sda_out;
+  logic scl_in;
 
-  /************************************************************
-  *  CLOCKING BLOCK
-  ************************************************************/
-  clocking i2c_cb @(posedge clk_i);
-    input #0 output #0 i2c_signal;
-  endclocking : i2c_cb
+  assign sda = sda_out ? 1'bz : sda_out;
+  assign sda_in = sda;
+  assign scl_in = scl;
 
-  /************************************************************
-  *  TASK: Write to I2C
-  ************************************************************/
-  task write_i2c(input [SIGNAL_WIDTH-1:0] i2c_input [N_SIGNAL], input is_sync, realtime delay [N_SIGNAL]);
-    // If synchronous, wait clock edge
-    if(is_sync)
-      @(i2c_cb);
+  /********************************************************
+  *   Clocking Block
+  ********************************************************/
+  clocking cb_driver @(negedge scl);
+    default input #0 output #0;
+    input  sda_in;
+    output sda_out;
+  endclocking : cb_driver
 
-    foreach(i2c_input[i])
-      i2c_signal[i] <= i2c_input[i];
-  endtask : write_i2c
+  clocking cb_monitor @(posedge scl);
+    default input #0 output #0;
+    input sda_in;
+  endclocking : cb_monitor
 
-  /************************************************************
-  *  TASK: Initialize I2C
-  ************************************************************/
-  task init_i2c(input [SIGNAL_WIDTH-1:0] i2c_input [N_SIGNAL]);
-    foreach(i2c_input[i])
-      i2c_signal[i] <= i2c_input[i];
-  endtask : init_i2c
+  clocking cb_scl @(posedge scl or negedge scl);
+    default input #0 output #0;
+    input scl_in;
+  endclocking
 
-  /************************************************************
-  *  TASK: Read I2C
-  ************************************************************/
-  task read_i2c(output [SIGNAL_WIDTH-1:0] i2c_output [N_SIGNAL], input is_sync);
-    // If synchronous, wait clock edge
-    if(is_sync)
-      @(i2c_cb);
-
-    foreach(i2c_output[i]) begin
-      automatic int j = i;
-      fork 
-        begin
-          i2c_output[j] <= i2c_signal[j];
-        end
-      join
+  /********************************************************
+  *   TASK: Send Start Byte
+  *     Sends I2C Device ID followed by Read/Write Bit.
+  *
+  *   @params[in]     i2c_address : logic [ADDR_SIZE-1:0]
+  *                   rw_bit      : logic
+  ********************************************************/
+  task send_start(input logic [ADDR_SIZE-1:0] i2c_address, input logic rw_bit);
+    for(int i=0; i<ADDR_SIZE; i++) begin
+      @(cb_driver);
+      sda_out <= i2c_address[i];
     end
-  endtask : read_i2c
+    @(cb_driver);
+    sda_out <= rw_bit;
+  endtask : send_start
+
+  /********************************************************
+  *   TASK: Write Data to SDA Line
+  *     Sends I2C data byte
+  *
+  *   @params[in]     i2c_data : logic [BYTE_SIZE-1:0]
+  ********************************************************/
+  task write_sda_byte(input logic [BYTE_SIZE-1:0] i2c_data, output logic ack_bit);
+    for(int i=0; i<BYTE_SIZE; i++) begin
+      @(cb_driver);
+      sda_out <= i2c_data[i];
+    end
+    @(cb_monitor);
+    ack_bit <= sda_in;
+  endtask : write_sda_byte
+
+  /********************************************************
+  *   TASK: Write Data to SDA Line
+  *     Sends I2C data bit
+  *
+  *   @params[in]     i2c_bit : logic 
+  ********************************************************/
+  task write_sda_bit(input logic i2c_bit);
+    @(cb_driver);
+    sda_out <= i2c_bit;
+  endtask : write_sda_bit
+
+  /********************************************************
+  *   TASK: Read I2C Data
+  *     Reads I2C Data
+  ********************************************************/
+  task read_sda(output logic [BYTE_SIZE-1:0] i2c_sda);
+    i2c_sda <= sda_in;
+  endtask : read_sda
+
+  /********************************************************
+  *   TASK: Read I2C SCL
+  *     Reads I2C clock
+  ********************************************************/
+  task read_scl(output logic i2c_scl);
+    @(cb_scl);
+    i2c_scl <= scl_in;
+  endtask : read_scl
 
 endinterface : i2c_agent_if
 

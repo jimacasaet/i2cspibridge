@@ -18,14 +18,28 @@
   parameter CLK_CLK   = 0;
   parameter CLK_SCL   = 1;
   // Clock Periods
-  parameter T_CLK     = 200ns;    // 5MHz
-  parameter T_SCL     = 10000ns;  // 100KHz
+  parameter T_CLK     = 200ns;    // 5 MHz
+  // I2C Clock Speeds Enum
+  typedef enum int {
+    I2C_STANDARD_MODE  = 10000,  // 100 KHz
+    I2C_FAST_MODE      = 2500,   // 400 KHz
+    I2C_FAST_MODE_PLUS = 1000,   // 1.0 MHz
+    I2C_HIGHSPEED_MODE = 588     // 1.7 MHz
+  } i2c_freq_e;
+
+  parameter i2c_freq_e T_SCL = I2C_FAST_MODE_PLUS;
 
   // ----- Reset Agent -----
   parameter RESET_WIDTH = 1;
-  parameter N_RESET     = 2;
+  parameter N_RESET     = 1;
   // Index for reset
   parameter RST_N   = 0;
+
+  // ----- I2C Agent ----
+  parameter I2C_BYTE_SIZE = 8;
+  parameter I2C_ADDR_SIZE = I2C_BYTE_SIZE-1;
+  parameter TARGET_ADDR = 7'b1010101; // I2C Target ID
+
 
   //################################
   // Typedefs

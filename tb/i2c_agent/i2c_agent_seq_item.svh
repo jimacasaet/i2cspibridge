@@ -9,17 +9,16 @@
   `define _I2C_AGENT_SEQ_ITEM_SVH
 
 class i2c_agent_seq_item#(
-    parameter SIGNAL_WIDTH = 1,
-    parameter N_SIGNAL     = 1
+    parameter BYTE_SIZE = 8,
+    parameter ADDR_SIZE = BYTE_SIZE-1
   ) extends uvm_sequence_item;
 
   // Register seq item to factory
-  `uvm_object_param_utils(i2c_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL))
+  `uvm_object_param_utils(i2c_agent_seq_item#(BYTE_SIZE, ADDR_SIZE))
 
   // Seq item variable definitions
-  i2c_op_e                 i2c_op;                // I2C operation
-  logic [SIGNAL_WIDTH-1:0]  i2c_signal [N_SIGNAL]; // I2C select
-  realtime                  delay       [N_SIGNAL]; // I2C Async delay
+  i2c_op_e                  i2c_op;                // I2C operation
+  logic [BYTE_SIZE-1:0]     i2c_signal;            // I2C Data
 
   /*********************************************************
   *   FUNCTION: Constructor
@@ -35,11 +34,7 @@ class i2c_agent_seq_item#(
   **********************************************************/
   virtual function string convert2string();
     string s;
-    $sformat(s, "op=%s ", i2c_op.name);
-    foreach(i2c_signal[i]) begin
-      $sformat(s, "%s signal[%0d]=%0h ", 
-                   s, i, i2c_signal[i]);
-    end
+    $sformat(s, "op=%s val=%0h", i2c_op.name, i2c_signal);
     return s;
   endfunction : convert2string
 

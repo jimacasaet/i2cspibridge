@@ -25,6 +25,7 @@ module tb_i2cspibridge();
 
   // Instantiate tb config
   i2cspibridge_config   m_cfg;
+  wire sda;
 
   //###########################################
   //  Instantiate Agent Interfaces
@@ -38,7 +39,17 @@ module tb_i2cspibridge();
   gpio_agent_if #(
     .SIGNAL_WIDTH(RESET_WIDTH ),
     .N_SIGNAL    (N_RESET     )
-  ) m_reset_vif (.clk_i(m_clock_vif.clk[CLK_CLK]));
+  ) m_reset_vif (
+    .clk_i(m_clock_vif.clk[CLK_CLK])
+  );
+
+  i2c_agent_if #(
+    .BYTE_SIZE(I2C_BYTE_SIZE),
+    .ADDR_SIZE(I2C_ADDR_SIZE)
+  ) m_i2c_vif (
+    .scl(m_clock_vif.clk[CLK_SCL]),
+    .sda( sda )
+  );
 
   //###########################################
   //  Set the VIF using uvm_config_db
@@ -49,6 +60,9 @@ module tb_i2cspibridge();
 
     uvm_config_db #(virtual gpio_agent_if#(RESET_WIDTH, N_RESET))::
       set(null, "uvm_test_top.t_env.m_reset_agent.*", "gpio_agent_if", m_reset_vif);
+
+    uvm_config_db #(virtual i2c_agent_if#(I2C_BYTE_SIZE, I2C_ADDR_SIZE))::
+      set(null, "uvm_test_top.t_env.m_i2c_slave_agent.*", "i2c_agent_if", m_i2c_vif);
     
     run_test();
   end // initial begin
@@ -92,7 +106,7 @@ module tb_i2cspibridge();
     .CLK  ( m_clock_vif.clk[CLK_CLK]      ),
     .RST_N( m_reset_vif.gpio_signal[RST_N]),
     .SCL  ( m_clock_vif.clk[CLK_SCL]      ),
-    .SDA  ( ),
+    .SDA  ( sda ),
     .MISO ( ),
     .SCLK ( ),
     .MOSI ( ),

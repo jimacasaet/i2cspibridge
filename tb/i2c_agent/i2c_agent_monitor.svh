@@ -1,10 +1,10 @@
 class i2c_agent_monitor#(
-    parameter SIGNAL_WIDTH = 1,
-    parameter N_SIGNAL     = 1,
-    type      SEQ_ITEM_T   = i2c_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL)
+    parameter BYTE_SIZE = 8,
+    parameter ADDR_SIZE = BYTE_SIZE-1,
+    type      SEQ_ITEM_T   = i2c_agent_seq_item#(BYTE_SIZE, ADDR_SIZE)
   ) extends uvm_monitor;
   // Register mon to factory
-  `uvm_component_param_utils(i2c_agent_monitor#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T))
+  `uvm_component_param_utils(i2c_agent_monitor#(BYTE_SIZE, ADDR_SIZE, SEQ_ITEM_T))
 
   // Analysis port instance
   uvm_analysis_port#(SEQ_ITEM_T)  m_ap;
@@ -13,7 +13,7 @@ class i2c_agent_monitor#(
   i2c_agent_config               m_cfg;
 
   // VIF instance
-  virtual i2c_agent_if#(SIGNAL_WIDTH, N_SIGNAL)  m_vif;
+  virtual i2c_agent_if#(BYTE_SIZE, ADDR_SIZE)  m_vif;
 
   /***********************************************************************************
   *   FUNCTION: Constructor
@@ -36,7 +36,7 @@ class i2c_agent_monitor#(
   virtual function void start_of_simulation_phase(uvm_phase phase);
     super.start_of_simulation_phase(phase);
     // Retrieve the virtual interface
-    assert(uvm_config_db#(virtual i2c_agent_if#(SIGNAL_WIDTH, N_SIGNAL))
+    assert(uvm_config_db#(virtual i2c_agent_if#(BYTE_SIZE, ADDR_SIZE))
       ::get(this, "", "i2c_agent_if", m_vif))
     else  
       `uvm_fatal("I2C Agent Driver", "Unable to retrieve I2C VIF!")
