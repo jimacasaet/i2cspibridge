@@ -22,6 +22,18 @@ class i2cspibridge_base_seq extends uvm_sequence;
   // Declare subsequencer handles
   clock_seqr_t        clock_seqr;
   reset_seqr_t        reset_seqr;
+  i2c_seqr_t          i2c_seqr;
+
+  // Declare sequences
+  i2c_agent_send_start_seq#(I2C_BYTE_SIZE,
+                            I2C_ADDR_SIZE,
+                            i2c_seq_item_t)   send_start_byte_seq;
+  i2c_agent_write_byte_seq#(I2C_BYTE_SIZE,
+                            I2C_ADDR_SIZE,
+                            i2c_seq_item_t)   send_data_byte_seq;
+  i2c_agent_send_stop_seq#(I2C_BYTE_SIZE,
+                            I2C_ADDR_SIZE,
+                            i2c_seq_item_t)   send_stop_seq;
 
   /************************************************************
   *   FUNCTION: Constructor
@@ -34,12 +46,40 @@ class i2cspibridge_base_seq extends uvm_sequence;
   *   TASK: Body
   *************************************************************/
   virtual task body();
+    // Create sequences
+    send_start_byte_seq = i2c_agent_send_start_seq#(I2C_BYTE_SIZE, I2C_ADDR_SIZE, i2c_seq_item_t)
+                            ::type_id::create("send_start_byte_seq");
+    send_data_byte_seq = i2c_agent_write_byte_seq#(I2C_BYTE_SIZE, I2C_ADDR_SIZE, i2c_seq_item_t)
+                            ::type_id::create("send_data_byte_seq");
+    send_stop_seq      = i2c_agent_send_stop_seq#(I2C_BYTE_SIZE, I2C_ADDR_SIZE, i2c_seq_item_t)
+                            ::type_id::create("send_stop_seq");
+
     // Connect sub-sequencer instances to p_sequencer 
     clock_seqr = p_sequencer.clock_seqr;
     reset_seqr = p_sequencer.reset_seqr;
+    i2c_seqr   = p_sequencer.i2c_seqr;
     // Set environment config
     m_cfg = p_sequencer.m_cfg;
   endtask : body
+
+  /************************************************************
+  *   Common I2C Tasks
+  *************************************************************/
+
+  task send_i2c_start();
+    send_start_byte_seq.i2c_address = TARGET_ADDR;
+    send_start_byte_seq.rw_bit      = 0;
+    send_start_byte_seq.start(i2c_seqr);
+  endtask : send_i2c_start
+
+  task send_i2c_data(logic [I2C_BYTE_SIZE-1:0] data_in);
+    send_data_byte_seq.i2c_signal = data_in;
+    send_data_byte_seq.start(i2c_seqr);
+  endtask : send_i2c_data
+
+  task send_i2c_stop();
+    send_stop_seq.start(i2c_seqr);
+  endtask : send_i2c_stop
   
 endclass : i2cspibridge_base_seq
 

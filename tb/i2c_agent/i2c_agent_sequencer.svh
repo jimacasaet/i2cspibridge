@@ -9,7 +9,7 @@
   `define _I2C_AGENT_SEQUENCER_SVH
 
 class i2c_agent_sequencer#(
-    type SEQ_ITEM_T = i2c_agent_seq_item#(1, 1)
+    type SEQ_ITEM_T = i2c_agent_seq_item#(8)
   ) extends uvm_sequencer#(SEQ_ITEM_T);
 
   `uvm_component_param_utils(i2c_agent_sequencer#(SEQ_ITEM_T))

@@ -11,7 +11,7 @@
 class i2c_slave_agent_driver#(
     parameter BYTE_SIZE = 8,
     parameter ADDR_SIZE = BYTE_SIZE-1,
-    type      SEQ_ITEM_T   = i2c_agent_seq_item#(BYTE_SIZE, ADDR_SIZE)
+    type      SEQ_ITEM_T   = i2c_agent_seq_item#(BYTE_SIZE)
   ) extends uvm_driver#(SEQ_ITEM_T);
   // Register to the factory
   `uvm_component_param_utils(i2c_slave_agent_driver#(BYTE_SIZE, ADDR_SIZE, SEQ_ITEM_T))
@@ -73,18 +73,23 @@ class i2c_slave_agent_driver#(
       // Do VIF task based on clock operation
       case(txn.i2c_op)
         I2C_SEND_START: begin
-          m_vif.write_i2c(txn.i2c_signal, m_cfg.is_sync, txn.delay);
+          m_vif.send_start(txn.i2c_signal[ADDR_SIZE:1], txn.i2c_signal[0] );
           `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Start Byte"), UVM_DEBUG)
         end
 
         I2C_WRITE_BYTE: begin
-          m_vif.init_i2c(txn.i2c_signal);
+          m_vif.write_sda_byte(txn.i2c_signal);
           `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Data Byte"), UVM_DEBUG)
         end
 
         I2C_WRITE_BIT: begin
-          m_vif.init_i2c(txn.i2c_signal);
+          m_vif.write_sda_bit(txn.i2c_signal[0]);
           `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Data Bit"), UVM_DEBUG)
+        end
+
+        I2C_SEND_STOP: begin
+          m_vif.send_stop();
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Stop Condition"), UVM_DEBUG)
         end
 
         default: begin

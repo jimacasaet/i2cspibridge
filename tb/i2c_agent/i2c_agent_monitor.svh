@@ -1,7 +1,7 @@
 class i2c_agent_monitor#(
     parameter BYTE_SIZE = 8,
     parameter ADDR_SIZE = BYTE_SIZE-1,
-    type      SEQ_ITEM_T   = i2c_agent_seq_item#(BYTE_SIZE, ADDR_SIZE)
+    type      SEQ_ITEM_T   = i2c_agent_seq_item#(BYTE_SIZE)
   ) extends uvm_monitor;
   // Register mon to factory
   `uvm_component_param_utils(i2c_agent_monitor#(BYTE_SIZE, ADDR_SIZE, SEQ_ITEM_T))
@@ -57,7 +57,7 @@ class i2c_agent_monitor#(
       // Create txn
       i2c_txn = new("i2c_txn");
       // Read txn from VIF
-      m_vif.read_i2c(i2c_txn.i2c_signal, m_cfg.is_sync);
+      m_vif.read_sda(i2c_txn.i2c_signal);
       // Write to AP
       m_ap.write(i2c_txn);
       // Print contents of txn

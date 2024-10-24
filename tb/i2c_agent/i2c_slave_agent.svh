@@ -11,7 +11,7 @@
 class i2c_slave_agent#(
     parameter BYTE_SIZE = 8,
     parameter ADDR_SIZE = BYTE_SIZE-1,
-    type      SEQ_ITEM_T   = i2c_agent_seq_item#(BYTE_SIZE, ADDR_SIZE)
+    type      SEQ_ITEM_T   = i2c_agent_seq_item#(BYTE_SIZE)
   ) extends uvm_agent;
 
   // Register to factory
@@ -51,7 +51,7 @@ class i2c_slave_agent#(
     m_ap = new( "m_ap", this );
 
     // Check that config has been set
-    assert(uvm_config_db#(i2c_agent_config)::get(this, "", "i2c_agent_config", m_cfg))
+    assert(uvm_config_db#(i2c_slave_agent_config)::get(this, "", "i2c_slave_agent_config", m_cfg))
     else
       `uvm_fatal("I2C Slave Agent", "Failed to get the configuration object")
     

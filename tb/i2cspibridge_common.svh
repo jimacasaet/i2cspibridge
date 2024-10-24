@@ -23,11 +23,10 @@
   typedef enum int {
     I2C_STANDARD_MODE  = 10000,  // 100 KHz
     I2C_FAST_MODE      = 2500,   // 400 KHz
-    I2C_FAST_MODE_PLUS = 1000,   // 1.0 MHz
-    I2C_HIGHSPEED_MODE = 588     // 1.7 MHz
+    I2C_FAST_MODE_PLUS = 1000    // 1.0 MHz
   } i2c_freq_e;
 
-  parameter i2c_freq_e T_SCL = I2C_FAST_MODE_PLUS;
+  parameter i2c_freq_e T_SCL = I2C_FAST_MODE;
 
   // ----- Reset Agent -----
   parameter RESET_WIDTH = 1;
@@ -48,15 +47,20 @@
   //----- Sequence Item Typedef -----
   typedef clock_agent_seq_item#(N_CLK)                clock_seq_item_t;
   typedef gpio_agent_seq_item#(RESET_WIDTH, N_RESET)  reset_seq_item_t;
+  typedef i2c_agent_seq_item#(I2C_BYTE_SIZE)          i2c_seq_item_t;
 
   //----- Sequencer Typedef -----
   typedef clock_agent_sequencer#(clock_seq_item_t)    clock_seqr_t;
   typedef gpio_agent_sequencer#(reset_seq_item_t)     reset_seqr_t;
+  typedef i2c_agent_sequencer#(i2c_seq_item_t)        i2c_seqr_t;
 
   //----- Agent Typedef ----
   typedef clock_agent#(N_CLK, clock_seq_item_t)       clock_agent_t;
   typedef gpio_agent#(RESET_WIDTH, N_RESET,
                       reset_seq_item_t)               reset_agent_t;
+  typedef i2c_slave_agent#(I2C_BYTE_SIZE, 
+                           I2C_ADDR_SIZE,
+                           i2c_seq_item_t)            i2c_agent_t;
 
 `endif // _I2CSPIBRIDGE_COMMON_SVH
 
