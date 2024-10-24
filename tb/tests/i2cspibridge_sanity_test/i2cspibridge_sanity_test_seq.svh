@@ -14,16 +14,17 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
   `uvm_object_param_utils_begin(i2cspibridge_sanity_test_seq)
   `uvm_object_utils_end
 
-  bit [2047:0]  data;
-  bit [7   :0]  len ;
-  bit [63  :0]  mode;
+  // bit [2047:0]  data;
+  // bit [7   :0]  len ;
+  // bit [63  :0]  mode;
+  randc logic [I2C_BYTE_SIZE-1:0] i2c_write_data;
 
   /************************************************************
   *   FUNCTION: Constructor
   *************************************************************/
   function new(string name="i2cspibridge_sanity_test_seq");
     super.new(name);
-    `uvm_info("I2CSPIBridge Sanity Test","Constructor Done", UVM_HIGH)
+    `uvm_info("I2CSPIBridge Sanity Test Seq","Constructor Done", UVM_HIGH)
   endfunction : new
 
   /************************************************************
@@ -31,6 +32,30 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
   *************************************************************/
   task body();
     super.body();
+
+    // Send start bit
+    send_i2c_start();
+    // Set write address to 8'h00
+    send_i2c_data(8'h00);
+    // Write to 0x00
+    send_i2c_data(8'h00);
+    // Write to 0x01
+    send_i2c_data(8'h00);
+    // Write to 0x02
+    send_i2c_data(8'h40);
+    // Send stop condition
+    send_i2c_stop();
+
+    // Send start bit
+    send_i2c_start();
+    // Set write address to 8'h50
+    send_i2c_data(8'h50);
+    // Send randomized data
+    repeat(25) begin
+      assert(randomize(i2c_write_data));
+      `uvm_info("I2CSPIBridge Sanity Test Seq", $sformatf("Writing I2C Data = %2h", i2c_write_data), UVM_LOW)
+      send_i2c_data(i2c_write_data);
+    end
 
     // TODO: DPI
     // mode = 64'h11_13011112;
@@ -44,10 +69,10 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
     // $display("get data = %s",data);
     
     // c_py_final();
-
-    #(T_SCL*10);
-    `uvm_info("I2CSPIBridge Sanity Test","Body Done", UVM_HIGH)
+    `uvm_info("I2CSPIBridge Sanity Test Seq","Body Done", UVM_HIGH)
   endtask : body
+
+  
   
 endclass : i2cspibridge_sanity_test_seq
 

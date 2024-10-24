@@ -62,7 +62,7 @@ module tb_i2cspibridge();
       set(null, "uvm_test_top.t_env.m_reset_agent.*", "gpio_agent_if", m_reset_vif);
 
     uvm_config_db #(virtual i2c_agent_if#(I2C_BYTE_SIZE, I2C_ADDR_SIZE))::
-      set(null, "uvm_test_top.t_env.m_i2c_slave_agent.*", "i2c_agent_if", m_i2c_vif);
+      set(null, "uvm_test_top.t_env.m_i2c_agent.*", "i2c_agent_if", m_i2c_vif);
     
     run_test();
   end // initial begin

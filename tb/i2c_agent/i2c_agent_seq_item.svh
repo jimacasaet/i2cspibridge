@@ -9,12 +9,11 @@
   `define _I2C_AGENT_SEQ_ITEM_SVH
 
 class i2c_agent_seq_item#(
-    parameter BYTE_SIZE = 8,
-    parameter ADDR_SIZE = BYTE_SIZE-1
+    parameter BYTE_SIZE = 8
   ) extends uvm_sequence_item;
 
   // Register seq item to factory
-  `uvm_object_param_utils(i2c_agent_seq_item#(BYTE_SIZE, ADDR_SIZE))
+  `uvm_object_param_utils(i2c_agent_seq_item#(BYTE_SIZE))
 
   // Seq item variable definitions
   i2c_op_e                  i2c_op;                // I2C operation

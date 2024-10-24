@@ -11,6 +11,9 @@
 class i2c_slave_agent_config extends i2c_agent_config;
   `uvm_component_param_utils(i2c_slave_agent_config)
 
+  // I2C Slave Address
+  logic [6:0] i2c_address;
+
   /************************************************************
   *   FUNCTION: Constructor
   *************************************************************/

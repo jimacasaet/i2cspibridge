@@ -16,14 +16,20 @@ interface i2c_agent_if#(parameter BYTE_SIZE = 8,
   import uvm_pkg::*;
   `include "uvm_macros.svh"
 
+  // Maximum frequency of I2C IF is 1.7 MHz
+  localparam realtime T_FM_PLUS = 1000ns;
+
   // Logic array for the clocks
   logic sda_in;
   logic sda_out;
+  logic sda_en;
   logic scl_in;
 
-  assign sda = sda_out ? 1'bz : sda_out;
+  assign sda = sda_en ? sda_out : 1'bz;
   assign sda_in = sda;
   assign scl_in = scl;
+
+  initial sda_out = 1'b1;
 
   /********************************************************
   *   Clocking Block
@@ -52,12 +58,21 @@ interface i2c_agent_if#(parameter BYTE_SIZE = 8,
   *                   rw_bit      : logic
   ********************************************************/
   task send_start(input logic [ADDR_SIZE-1:0] i2c_address, input logic rw_bit);
+    // Drive the start condition: SDA goes low while SCL is high
+    sda_en  <= 1;
+    sda_out <= 1;
+    @(cb_monitor);
+    #(T_FM_PLUS/2);
+    sda_out <= 0;
+    // Send the address + rw bit
     for(int i=0; i<ADDR_SIZE; i++) begin
       @(cb_driver);
-      sda_out <= i2c_address[i];
+      sda_out <= i2c_address[ADDR_SIZE-1-i];
     end
     @(cb_driver);
     sda_out <= rw_bit;
+    @(cb_driver);
+    sda_en <= 0;
   endtask : send_start
 
   /********************************************************
@@ -66,13 +81,14 @@ interface i2c_agent_if#(parameter BYTE_SIZE = 8,
   *
   *   @params[in]     i2c_data : logic [BYTE_SIZE-1:0]
   ********************************************************/
-  task write_sda_byte(input logic [BYTE_SIZE-1:0] i2c_data, output logic ack_bit);
+  task write_sda_byte(input logic [BYTE_SIZE-1:0] i2c_data);
     for(int i=0; i<BYTE_SIZE; i++) begin
       @(cb_driver);
-      sda_out <= i2c_data[i];
+      sda_en <= 1;
+      sda_out <= i2c_data[BYTE_SIZE-1-i];
     end
-    @(cb_monitor);
-    ack_bit <= sda_in;
+    @(cb_driver);
+    sda_en <=0;
   endtask : write_sda_byte
 
   /********************************************************
@@ -83,7 +99,10 @@ interface i2c_agent_if#(parameter BYTE_SIZE = 8,
   ********************************************************/
   task write_sda_bit(input logic i2c_bit);
     @(cb_driver);
+    sda_en <= 1;
     sda_out <= i2c_bit;
+    @(cb_driver);
+    sda_en <= 0;
   endtask : write_sda_bit
 
   /********************************************************
@@ -91,7 +110,8 @@ interface i2c_agent_if#(parameter BYTE_SIZE = 8,
   *     Reads I2C Data
   ********************************************************/
   task read_sda(output logic [BYTE_SIZE-1:0] i2c_sda);
-    i2c_sda <= sda_in;
+    @(cb_scl);
+    i2c_sda <= (sda_in===1'bz) ? 1'b1 : sda_in;
   endtask : read_sda
 
   /********************************************************
@@ -102,6 +122,19 @@ interface i2c_agent_if#(parameter BYTE_SIZE = 8,
     @(cb_scl);
     i2c_scl <= scl_in;
   endtask : read_scl
+
+  /********************************************************
+  *   TASK: Send Stop
+  *     Sends Stop Condition
+  ********************************************************/
+  task send_stop();
+    sda_en  <= 1;
+    sda_out <= 0;
+    @(cb_monitor);
+    #(T_FM_PLUS/2);
+    sda_out <= 1;
+    @(cb_monitor);
+  endtask : send_stop
 
 endinterface : i2c_agent_if
 

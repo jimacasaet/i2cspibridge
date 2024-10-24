@@ -28,11 +28,13 @@ class i2cspibridge_environment extends uvm_env;
   //  Agent-related Instances
   //###############################################
   // Agents
-  clock_agent_t         m_clock_agent;
-  reset_agent_t         m_reset_agent;
+  clock_agent_t           m_clock_agent;
+  reset_agent_t           m_reset_agent;
+  i2c_agent_t             m_i2c_agent;
   // Agent Configs
-  clock_agent_config    m_clock_agent_cfg;
-  gpio_agent_config     m_reset_agent_cfg;
+  clock_agent_config      m_clock_agent_cfg;
+  gpio_agent_config       m_reset_agent_cfg;
+  i2c_slave_agent_config  m_i2c_agent_cfg;
 
   /******************************************************************************
   *   FUNCTION: Constructor
@@ -88,6 +90,21 @@ class i2cspibridge_environment extends uvm_env;
       `uvm_info("I2CSPIBRIDGE Env", "Reset Agent Config Set", UVM_HIGH)
     end
 
+    // Build I2C Agent if defined in config
+    if(m_cfg.has_i2c_slv_agent) begin
+      // Agent
+      m_i2c_agent = i2c_agent_t::type_id::create("m_i2c_agent", this);
+      `uvm_info("I2CSPIBRIDGE Env", "I2C Agent Built", UVM_HIGH)
+      // Agent Config
+      m_i2c_agent_cfg = i2c_slave_agent_config::type_id::create("m_i2c_agent_cfg", this);
+      m_i2c_agent_cfg.set_active_passive(UVM_ACTIVE);
+      `uvm_info("I2CSPIBRIDGE Env", "I2C Agent Config Built", UVM_HIGH)
+      // Set Config
+      uvm_config_db#(i2c_slave_agent_config)
+        ::set(this, "m_i2c_agent", "i2c_slave_agent_config", m_i2c_agent_cfg);
+      `uvm_info("I2CSPIBRIDGE Env", "I2C Agent Config Set", UVM_HIGH)
+    end
+
     // Build Scoreboard if defined in config
     if(m_cfg.has_scoreboard) begin
       m_sb = i2cspibridge_sb::type_id::create("m_sb", this);
@@ -113,6 +130,7 @@ class i2cspibridge_environment extends uvm_env;
     if(m_cfg.has_clock_agent) begin
       m_vseqr.clock_seqr = m_clock_agent.m_seqr;
       m_vseqr.reset_seqr = m_reset_agent.m_seqr;
+      m_vseqr.i2c_seqr   = m_i2c_agent.m_seqr;
     end
 
     `uvm_info("I2CSPIBRIDGE Env", "Connect Phase Finished", UVM_HIGH)

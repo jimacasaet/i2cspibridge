@@ -14,9 +14,10 @@ package i2c_agent_pkg;
 
   // Typedef enum for clock operations
   typedef enum {
-    I2C_SEND_START,   // I2C Send Address + RW bit
+    I2C_SEND_START,   // I2C Start Condition and Send Address + RW bit
     I2C_WRITE_BYTE,   // I2c Send Data Byte
-    I2C_WRITE_BIT     // I2C Send Data Bit
+    I2C_WRITE_BIT,    // I2C Send Data Bit
+    I2C_SEND_STOP     // I2C Stop Condition
   } i2c_op_e;
 
   `include "i2c_agent_config.svh"
