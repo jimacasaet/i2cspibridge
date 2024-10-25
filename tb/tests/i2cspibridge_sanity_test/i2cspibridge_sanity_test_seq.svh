@@ -33,8 +33,9 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
   task body();
     super.body();
 
+    /* Set SPI Configuration Registers */
     // Send start bit
-    send_i2c_start();
+    send_i2c_start(1'b0);
     // Set write address to 8'h00
     send_i2c_data(8'h00);
     // Write to 0x00
@@ -46,8 +47,9 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
     // Send stop condition
     send_i2c_stop();
 
-    // Send start bit
-    send_i2c_start();
+    /* Write to SPI Mem */
+    // Send start bit with write
+    send_i2c_start(1'b0);
     // Set write address to 8'h50
     send_i2c_data(8'h50);
     // Send randomized data
@@ -56,6 +58,18 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
       `uvm_info("I2CSPIBridge Sanity Test Seq", $sformatf("Writing I2C Data = %2h", i2c_write_data), UVM_LOW)
       send_i2c_data(i2c_write_data);
     end
+    send_i2c_stop();
+
+    /* Set write address to 0x50*/
+    // Send start bit with write
+    send_i2c_start(1'b0);
+    // Set write address to 8'h50
+    send_i2c_data(8'h50);
+    /* Repeated start */
+    send_i2c_repeated_start(1'b1); // FIXME: Replace delay with proper repeated start function
+    repeat(3)
+      read_i2c_data(1'b1);
+    send_i2c_stop();
 
     // TODO: DPI
     // mode = 64'h11_13011112;
