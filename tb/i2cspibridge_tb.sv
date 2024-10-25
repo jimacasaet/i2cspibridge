@@ -27,6 +27,10 @@ module tb_i2cspibridge();
   i2cspibridge_config   m_cfg;
   wire sda;
 
+  // Temporary wires until SPI Agent is created
+  wire SCLK_w, MOSI_w, MISO_w;
+  wire SS0_w, SS1_w, SS2_w;
+
   //###########################################
   //  Instantiate Agent Interfaces
   //###########################################
@@ -107,12 +111,46 @@ module tb_i2cspibridge();
     .RST_N( m_reset_vif.gpio_signal[RST_N]),
     .SCL  ( m_clock_vif.clk[CLK_SCL]      ),
     .SDA  ( sda ),
-    .MISO ( ),
-    .SCLK ( ),
-    .MOSI ( ),
-    .SS0  ( ),
-    .SS1  ( ),
-    .SS2  ( )
+    .MISO ( MISO_w ),
+    .SCLK ( SCLK_w ),
+    .MOSI ( MOSI_w ),
+    .SS0  ( SS0_w ),
+    .SS1  ( SS1_w ),
+    .SS2  ( SS2_w )
+  );
+
+  //###########################################
+  //  Instantiate SPI Slaves
+  //###########################################
+  
+  // SS0
+  SPISlave#(.DATA_WIDTH(I2C_BYTE_SIZE)) i_ss0(
+    .CLK  ( m_clock_vif.clk[CLK_CLK]      ),
+    .RST_N( m_reset_vif.gpio_signal[RST_N]),
+    .SCLK ( SCLK_w ),
+    .MOSI ( MOSI_w ),
+    .SS   ( SS0_w  ),
+    .MISO ( MISO_w )
+  );
+
+  // SS1
+  SPISlave#(.DATA_WIDTH(I2C_BYTE_SIZE)) i_ss1(
+    .CLK  ( m_clock_vif.clk[CLK_CLK]      ),
+    .RST_N( m_reset_vif.gpio_signal[RST_N]),
+    .SCLK ( SCLK_w ),
+    .MOSI ( MOSI_w ),
+    .SS   ( SS1_w  ),
+    .MISO ( MISO_w )
+  );
+
+  // SS2
+  SPISlave#(.DATA_WIDTH(I2C_BYTE_SIZE)) i_ss2(
+    .CLK  ( m_clock_vif.clk[CLK_CLK]      ),
+    .RST_N( m_reset_vif.gpio_signal[RST_N]),
+    .SCLK ( SCLK_w ),
+    .MOSI ( MOSI_w ),
+    .SS   ( SS2_w  ),
+    .MISO ( MISO_w )
   );
 endmodule : tb_i2cspibridge
 

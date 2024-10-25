@@ -17,6 +17,8 @@ package i2c_agent_pkg;
     I2C_SEND_START,   // I2C Start Condition and Send Address + RW bit
     I2C_WRITE_BYTE,   // I2c Send Data Byte
     I2C_WRITE_BIT,    // I2C Send Data Bit
+    I2C_READ_BYTE,    // I2C Read Data Byte
+    I2C_SEND_RS,      // I2C Repeated Start Condition
     I2C_SEND_STOP     // I2C Stop Condition
   } i2c_op_e;
 

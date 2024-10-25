@@ -19,6 +19,8 @@ class i2c_slave_agent_driver#(
   // Handle to the virtual interface
   virtual i2c_agent_if#(BYTE_SIZE, ADDR_SIZE) m_vif;
 
+  logic [BYTE_SIZE-1:0] sda_placeholder;
+
   // Handle to the config object
   i2c_agent_config             m_cfg;
 
@@ -85,6 +87,17 @@ class i2c_slave_agent_driver#(
         I2C_WRITE_BIT: begin
           m_vif.write_sda_bit(txn.i2c_signal[0]);
           `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Data Bit"), UVM_DEBUG)
+        end
+
+        I2C_READ_BYTE: begin
+          m_vif.read_sda_byte(txn.i2c_signal[0]);
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Reading I2C Data Byte with %s", {txn.i2c_signal[0]?"ack":"nack"} ), UVM_DEBUG)
+        end
+
+        I2C_SEND_RS: begin
+          m_vif.read_sda(sda_placeholder);
+          m_vif.send_start(txn.i2c_signal[ADDR_SIZE:1], txn.i2c_signal[0] );
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Repeated Start Condition "), UVM_DEBUG)
         end
 
         I2C_SEND_STOP: begin
