@@ -2,25 +2,26 @@
 // Create Date  :   2024-10-10
 // Author       :   John Rufino Macasaet
 // E-Mail       :   j_macasaet@vtech-inc.co.jp
-// File Name    :   i2c_agent_write_byte_seq.svh
-// Description  :   I2C Agent Write Byte Sequence
+// File Name    :   i2c_agent_send_rs_seq.svh
+// Description  :   I2C Agent Send Repeated Start Byte Sequence
 //-------------------------------------------------------------
-`ifndef _I2C_AGENT_WRITE_BYTE_SEQ_SVH
-  `define _I2C_AGENT_WRITE_BYTE_SEQ_SVH
-class i2c_agent_write_byte_seq#(
+`ifndef _I2C_AGENT_SEND_RS_SEQ_SVH
+  `define _I2C_AGENT_SEND_RS_SEQ_SVH
+class i2c_agent_send_rs_seq#(
     parameter BYTE_SIZE = 8,
     parameter ADDR_SIZE = BYTE_SIZE-1,
     type      SEQ_ITEM_T   = i2c_agent_seq_item#(BYTE_SIZE)
   ) extends i2c_agent_base_seq#(SEQ_ITEM_T);
-  `uvm_object_param_utils(i2c_agent_write_byte_seq#(BYTE_SIZE, ADDR_SIZE, SEQ_ITEM_T))
+  `uvm_object_param_utils(i2c_agent_send_rs_seq#(BYTE_SIZE, ADDR_SIZE, SEQ_ITEM_T))
 
-  // Define Variables to write_byte Seq Item manually
-  logic [BYTE_SIZE-1:0] i2c_signal;
+  // Define Variables to init Seq Item manually
+  logic [ADDR_SIZE-1:0] i2c_address;
+  logic                 rw_bit;
 
   /******************************************************
   *   FUNCTION: Constructor
   ******************************************************/
-  function new(string name="i2c_agent_write_byte_seq");
+  function new(string name="i2c_agent_send_rs_seq");
     super.new(name);
   endfunction : new
 
@@ -34,12 +35,12 @@ class i2c_agent_write_byte_seq#(
     // Create the sequence item
     command = SEQ_ITEM_T::type_id::create("command");
 
-    // Set the sequence item contents
+    // Create clocks with defined init settings in the variables
     start_item(command);
-      command.i2c_op = I2C_WRITE_BYTE;
-      command.i2c_signal = i2c_signal;
+      command.i2c_op      = I2C_SEND_RS;
+      command.i2c_signal  = {i2c_address, rw_bit};
     finish_item(command);
   endtask : body
   
-endclass : i2c_agent_write_byte_seq
-`endif // _I2C_AGENT_WRITE_BYTE_SEQ_SVH
+endclass : i2c_agent_send_rs_seq
+`endif // _I2C_AGENT_SEND_RS_SEQ_SVH

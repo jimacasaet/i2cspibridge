@@ -106,13 +106,24 @@ interface i2c_agent_if#(parameter BYTE_SIZE = 8,
   endtask : write_sda_bit
 
   /********************************************************
-  *   TASK: Read I2C Data
-  *     Reads I2C Data
+  *   TASK: Read I2C Data Bit
+  *     Reads I2C Data 
   ********************************************************/
   task read_sda(output logic [BYTE_SIZE-1:0] i2c_sda);
     @(cb_scl);
     i2c_sda <= (sda_in===1'bz) ? 1'b1 : sda_in;
   endtask : read_sda
+
+  /********************************************************
+  *   TASK: Read I2C Data Byte
+  *     Reads I2C Data
+  ********************************************************/
+  task read_sda_byte(input logic ack);
+    repeat(BYTE_SIZE) begin
+      @(cb_monitor);
+    end
+    write_sda_bit(ack);
+  endtask : read_sda_byte
 
   /********************************************************
   *   TASK: Read I2C SCL

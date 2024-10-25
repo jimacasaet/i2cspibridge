@@ -18,6 +18,7 @@ class i2c_agent_seq_item#(
   // Seq item variable definitions
   i2c_op_e                  i2c_op;                // I2C operation
   logic [BYTE_SIZE-1:0]     i2c_signal;            // I2C Data
+  logic                     i2c_ack;
 
   /*********************************************************
   *   FUNCTION: Constructor

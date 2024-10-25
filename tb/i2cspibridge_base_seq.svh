@@ -34,6 +34,12 @@ class i2cspibridge_base_seq extends uvm_sequence;
   i2c_agent_send_stop_seq#(I2C_BYTE_SIZE,
                             I2C_ADDR_SIZE,
                             i2c_seq_item_t)   send_stop_seq;
+  i2c_agent_read_byte_seq #(I2C_BYTE_SIZE,
+                            I2C_ADDR_SIZE,
+                            i2c_seq_item_t)   read_byte_seq;
+  i2c_agent_send_rs_seq   #(I2C_BYTE_SIZE,
+                            I2C_ADDR_SIZE,
+                            i2c_seq_item_t)   send_repeated_start_seq;
 
   /************************************************************
   *   FUNCTION: Constructor
@@ -53,6 +59,10 @@ class i2cspibridge_base_seq extends uvm_sequence;
                             ::type_id::create("send_data_byte_seq");
     send_stop_seq      = i2c_agent_send_stop_seq#(I2C_BYTE_SIZE, I2C_ADDR_SIZE, i2c_seq_item_t)
                             ::type_id::create("send_stop_seq");
+    read_byte_seq      = i2c_agent_read_byte_seq#(I2C_BYTE_SIZE, I2C_ADDR_SIZE, i2c_seq_item_t)
+                            ::type_id::create("read_byte_seq");
+    send_repeated_start_seq = i2c_agent_send_rs_seq#(I2C_BYTE_SIZE, I2C_ADDR_SIZE, i2c_seq_item_t)
+                            ::type_id::create("send_repeated_start_seq");
 
     // Connect sub-sequencer instances to p_sequencer 
     clock_seqr = p_sequencer.clock_seqr;
@@ -66,9 +76,9 @@ class i2cspibridge_base_seq extends uvm_sequence;
   *   Common I2C Tasks
   *************************************************************/
 
-  task send_i2c_start();
+  task send_i2c_start(logic rw);
     send_start_byte_seq.i2c_address = TARGET_ADDR;
-    send_start_byte_seq.rw_bit      = 0;
+    send_start_byte_seq.rw_bit      = rw;
     send_start_byte_seq.start(i2c_seqr);
   endtask : send_i2c_start
 
@@ -80,6 +90,17 @@ class i2cspibridge_base_seq extends uvm_sequence;
   task send_i2c_stop();
     send_stop_seq.start(i2c_seqr);
   endtask : send_i2c_stop
+
+  task read_i2c_data(logic ack);
+    read_byte_seq.i2c_ack = ack;
+    read_byte_seq.start(i2c_seqr);
+  endtask : read_i2c_data
+
+  task send_i2c_repeated_start(logic rw);
+    send_repeated_start_seq.i2c_address = TARGET_ADDR;
+    send_repeated_start_seq.rw_bit      = rw;
+    send_repeated_start_seq.start(i2c_seqr);
+  endtask : send_i2c_repeated_start
   
 endclass : i2cspibridge_base_seq
 
