@@ -19,12 +19,14 @@ package i2cspibridge_uvm_pkg;
   // import "DPI-C" function void c_py_init();
   // import "DPI-C" function void c_py_final();
   // import "DPI-C" function void c_py_gen_packet(input bit[63:0] mode, output bit[2047:0] pkt, output bit [7:0] len);
+  `include "i2cspibridge_common.svh"
+
+  typedef logic [I2C_BYTE_SIZE-1:0] i2c_byte_t;
 
   typedef class i2cspibridge_virtual_sequencer;
   typedef class i2cspibridge_config;
   typedef class i2cspibridge_sb;
 
-  `include "i2cspibridge_common.svh"
   `include "i2cspibridge_config.svh"
   `include "i2cspibridge_virtual_sequencer.svh"
   `include "i2cspibridge_sb.svh"

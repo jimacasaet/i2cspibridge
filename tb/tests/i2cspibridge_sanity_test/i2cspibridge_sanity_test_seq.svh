@@ -17,7 +17,11 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
   // bit [2047:0]  data;
   // bit [7   :0]  len ;
   // bit [63  :0]  mode;
-  randc logic [I2C_BYTE_SIZE-1:0] i2c_write_data;
+  
+  // Instantiate the sequences
+  i2cspibridge_config_seq             config_seq;
+  i2cspibridge_write_data_seq         write_data_seq;
+  i2cspibridge_read_data_seq          read_data_seq;
 
   /************************************************************
   *   FUNCTION: Constructor
@@ -31,45 +35,27 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
   *   TASK: Body
   *************************************************************/
   task body();
+    config_seq      = i2cspibridge_config_seq::type_id::create("config_seq");
+    write_data_seq  = i2cspibridge_write_data_seq::type_id::create("write_data_seq");
+    read_data_seq   = i2cspibridge_read_data_seq::type_id::create("read_data_seq");
+
     super.body();
 
-    /* Set SPI Configuration Registers */
-    // Send start bit
-    send_i2c_start(1'b0);
-    // Set write address to 8'h00
-    send_i2c_data(8'h00);
-    // Write to 0x00
-    send_i2c_data(8'h00);
-    // Write to 0x01
-    send_i2c_data(8'h00);
-    // Write to 0x02
-    send_i2c_data(8'h40);
-    // Send stop condition
-    send_i2c_stop();
+    /* Set Configuration Registers to write to SS0*/
+    config_seq.dest     = 2'b01;
+    config_seq.spi_clk  = 1'b1;
+    config_seq.spi_cfg  = 2'b00;
+    config_seq.start(p_sequencer);
 
     /* Write to SPI Mem */
-    // Send start bit with write
-    send_i2c_start(1'b0);
-    // Set write address to 8'h50
-    send_i2c_data(8'h50);
-    // Send randomized data
-    repeat(25) begin
-      assert(randomize(i2c_write_data));
-      `uvm_info("I2CSPIBridge Sanity Test Seq", $sformatf("Writing I2C Data = %2h", i2c_write_data), UVM_LOW)
-      send_i2c_data(i2c_write_data);
-    end
-    send_i2c_stop();
+    write_data_seq.addr       = 8'h50;
+    write_data_seq.write_iter = 3;
+    write_data_seq.start(p_sequencer);
 
     /* Set write address to 0x50*/
-    // Send start bit with write
-    send_i2c_start(1'b0);
-    // Set write address to 8'h50
-    send_i2c_data(8'h50);
-    /* Repeated start */
-    send_i2c_repeated_start(1'b1); // FIXME: Replace delay with proper repeated start function
-    repeat(3)
-      read_i2c_data(1'b1);
-    send_i2c_stop();
+    read_data_seq.addr        = 8'h50;
+    read_data_seq.read_iter   = 3;
+    read_data_seq.start(p_sequencer);
 
     // TODO: DPI
     // mode = 64'h11_13011112;
