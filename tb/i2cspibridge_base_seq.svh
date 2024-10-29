@@ -25,6 +25,9 @@ class i2cspibridge_base_seq extends uvm_sequence;
   i2c_seqr_t          i2c_seqr;
 
   // Declare sequences
+  clock_agent_set_seq#(N_CLK, 
+                       clock_seq_item_t)      set_clock_seq;
+
   i2c_agent_send_start_seq#(I2C_BYTE_SIZE,
                             I2C_ADDR_SIZE,
                             i2c_seq_item_t)   send_start_byte_seq;
@@ -53,6 +56,9 @@ class i2cspibridge_base_seq extends uvm_sequence;
   *************************************************************/
   virtual task body();
     // Create sequences
+    set_clock_seq = clock_agent_set_seq#(N_CLK, clock_seq_item_t)
+                    ::type_id::create("set_clock_seq");
+
     send_start_byte_seq = i2c_agent_send_start_seq#(I2C_BYTE_SIZE, I2C_ADDR_SIZE, i2c_seq_item_t)
                             ::type_id::create("send_start_byte_seq");
     send_data_byte_seq = i2c_agent_write_byte_seq#(I2C_BYTE_SIZE, I2C_ADDR_SIZE, i2c_seq_item_t)
@@ -101,6 +107,21 @@ class i2cspibridge_base_seq extends uvm_sequence;
     send_repeated_start_seq.rw_bit      = rw;
     send_repeated_start_seq.start(i2c_seqr);
   endtask : send_i2c_repeated_start
+
+  task change_scl_freq(i2c_freq_e T_SCL);
+    set_clock_seq.clock_sel[CLK_CLK]    = 0;
+    set_clock_seq.clock_init[CLK_CLK]   = 1;
+    set_clock_seq.clock_period[CLK_CLK] = T_SCL;
+    set_clock_seq.phase_shift[CLK_CLK]  = 0;
+    set_clock_seq.duty_cycle[CLK_CLK]   = 50;
+
+    set_clock_seq.clock_sel[CLK_SCL]    = 1;
+    set_clock_seq.clock_init[CLK_SCL]   = 1;
+    set_clock_seq.clock_period[CLK_SCL] = T_SCL;
+    set_clock_seq.phase_shift[CLK_SCL]  = 0;
+    set_clock_seq.duty_cycle[CLK_SCL]   = 50;
+    set_clock_seq.start(clock_seqr);
+  endtask : change_scl_freq
   
 endclass : i2cspibridge_base_seq
 
