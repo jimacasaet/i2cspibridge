@@ -17,10 +17,10 @@ compile_uvm_dpi:
 	vcs -full64 $(VCS_CFLAG) $(VCS_LDFLAG) $(C_SRC)/c_call_py.c '-timescale=1ns/1ps' -kdb -f rtl_i2cspibridge.f -f tb_i2cspibridge.f -sverilog -cc cc -assert svaext -full64 -ntb_opts uvm-1.2 -debug_access+all -top tb_i2cspibridge -cm line+cond+fsm+tgl+branch+assert -cm_dir i2cspibridge +define+COV
 
 run_sim:
-	./simv -licqueue +ntb_random_seed=$(SEED) +UVM_VERBOSITY=$(VERBOSITY) +UVM_TESTNAME=$(TESTNAME) +UVM_NO_RELNOTES +UVM_MAX_QUIT_COUNT=100 -cm line+cond+fsm+tgl+branch+assert -cm_dir i2cspibridge 
+	./simv -licqueue +ntb_random_seed=$(SEED) +UVM_VERBOSITY=$(VERBOSITY) +UVM_TESTNAME=$(TESTNAME) +UVM_NO_RELNOTES +UVM_MAX_QUIT_COUNT=100 -cm line+cond+fsm+tgl+branch+assert -cm_dir $(TESTNAME)_$(SEED)
 
 run_gui:
-	./simv -licqueue +ntb_random_seed=$(SEED) +UVM_VERBOSITY=$(VERBOSITY) +UVM_TESTNAME=$(TESTNAME) +UVM_NO_RELNOTES +UVM_MAX_QUIT_COUNT=100 -cm line+cond+fsm+tgl+branch+assert -cm_dir i2cspibridge -verdi
+	./simv -licqueue +ntb_random_seed=$(SEED) +UVM_VERBOSITY=$(VERBOSITY) +UVM_TESTNAME=$(TESTNAME) +UVM_NO_RELNOTES +UVM_MAX_QUIT_COUNT=100 -cm line+cond+fsm+tgl+branch+assert -cm_dir $(TESTNAME)_$(SEED) -verdi
 
 report_cov:
 	ls | grep .vdb > list_vdb

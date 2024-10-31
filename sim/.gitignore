@@ -1,0 +1,6 @@
+*
+!SPI_MEM.mem
+!Makefile
+!tb_i2cspibridge.f
+!rtl_i2cspibridge.f
+!.gitignore
