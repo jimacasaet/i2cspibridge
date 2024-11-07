@@ -97,6 +97,9 @@ class i2cspibridge_spi_wr_test_seq extends i2cspibridge_base_seq;
     assert(randomize(spi_slave) with { spi_slave inside {2'b01, 2'b10, 2'b11}; } );
     assert(randomize(spi_clk) with {spi_clk dist {1'b0:= 70, 1'b1 := 30}; } );
     assert(randomize(spi_cfg) with {spi_cfg dist {2'b00:=60, [2'b01:2'b11]:=40}; } );
+    //Print the randomized parameters
+    `uvm_info("SPI WR Test Seq", $sformatf("Rand Test Params\nwr_addr=%0h\niter=%0d\nspi_slv=%0b\nspi_clk=%0h\nspi_cfg=%0b",
+              wr_addr, iter, spi_slave, spi_clk, spi_cfg), UVM_LOW)
   endtask : randomize_test_params
   
 endclass : i2cspibridge_spi_wr_test_seq

@@ -7,7 +7,7 @@ package i2cspibridge_test_pkg;
   
   import i2cspibridge_uvm_pkg::*;
 
-  `include "i2cspibridge_base_test.svh";
+  `include "i2cspibridge_base_test.svh"
 
   // Test Sequences
   `include "i2cspibridge_sanity_test/i2cspibridge_sanity_test_seq.svh"

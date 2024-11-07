@@ -7,6 +7,9 @@
 // I2C Agent 
 ../tb/i2c_agent/i2c_agent_pkg.sv
 ../tb/i2c_agent/i2c_agent_if.sv
+// SPI Agent 
+../tb/spi_agent/spi_agent_pkg.sv
+../tb/spi_agent/spi_agent_if.sv
 // TB 
 ../tb/i2cspibridge_uvm_pkg.sv
 ../tb/tests/i2cspibridge_test_pkg.sv
@@ -22,3 +25,5 @@
 +incdir+../tb/gpio_agent/seq/
 +incdir+../tb/i2c_agent/
 +incdir+../tb/i2c_agent/seq/
++incdir+../tb/spi_agent/
++incdir+../tb/spi_agent/seq/

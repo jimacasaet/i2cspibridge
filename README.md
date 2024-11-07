@@ -68,7 +68,8 @@ $ make report_cov
 
 This will merge all `*.vdb` files into one and generate a report based on that.
 
-To open the HTML coverage report, you may use `firefox` or any other web browser available to you:
+To open the HTML coverage report, you may use `firefox` or any other web browser available to you. 
+The coverage report wil be in the `urgReport` folder.
 
 ```
 firefox urgReport/dashboard.html

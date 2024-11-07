@@ -9,15 +9,15 @@
   `define _I2CSPIBRIDGE_BASE_SEQ_SVH
 
 class i2cspibridge_base_seq extends uvm_sequence;
+  // Declare config object
+  i2cspibridge_config m_cfg;
+  
   // Declare the P Sequencer
   `uvm_declare_p_sequencer(i2cspibridge_virtual_sequencer)
   // Register with the factory
   `uvm_object_param_utils_begin(i2cspibridge_base_seq)
     `uvm_field_object(m_cfg, UVM_ALL_ON)
   `uvm_object_utils_end
-
-  // Declare config object
-  i2cspibridge_config m_cfg;
 
   // Declare subsequencer handles
   clock_seqr_t        clock_seqr;

@@ -71,19 +71,41 @@ class i2c_master_agent_driver#(
       `uvm_info("I2C Agent Driver", $sformatf("Seq Item:\n%s", txn.convert2string), UVM_HIGH)
 
       // Do VIF task based on clock operation
+      // Do VIF task based on clock operation
       case(txn.i2c_op)
-        I2C_WRITE: begin
-          m_vif.write_i2c(txn.i2c_signal, m_cfg.is_sync, txn.delay);
-          `uvm_info("I2C Agent Driver", $sformatf("Written to I2C"), UVM_DEBUG)
+        I2C_SEND_START: begin
+          m_vif.send_start(txn.i2c_signal[ADDR_SIZE:1], txn.i2c_signal[0] );
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Start Byte"), UVM_DEBUG)
         end
 
-        I2C_INIT: begin
-          m_vif.init_i2c(txn.i2c_signal);
-          `uvm_info("I2C Agent Driver", $sformatf("I2C Initialized"), UVM_DEBUG)
+        I2C_WRITE_BYTE: begin
+          m_vif.write_sda_byte(txn.i2c_signal);
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Data Byte"), UVM_DEBUG)
+        end
+
+        I2C_WRITE_BIT: begin
+          m_vif.write_sda_bit(txn.i2c_signal[0]);
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Data Bit"), UVM_DEBUG)
+        end
+
+        I2C_READ_BYTE: begin
+          m_vif.read_sda_byte(txn.i2c_signal[0]);
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Reading I2C Data Byte with %s", {txn.i2c_signal[0]?"ack":"nack"} ), UVM_DEBUG)
+        end
+
+        I2C_SEND_RS: begin
+          m_vif.read_sda(sda_placeholder);
+          m_vif.send_start(txn.i2c_signal[ADDR_SIZE:1], txn.i2c_signal[0] );
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Repeated Start Condition "), UVM_DEBUG)
+        end
+
+        I2C_SEND_STOP: begin
+          m_vif.send_stop();
+          `uvm_info("I2C Slave Agent Driver", $sformatf("Sent I2C Stop Condition"), UVM_DEBUG)
         end
 
         default: begin
-          `uvm_fatal("I2C Agent Driver", "Unknown I2C Operation!")
+          `uvm_fatal("I2C Slave Agent Driver", "Unknown I2C Operation!")
         end
       endcase
 
