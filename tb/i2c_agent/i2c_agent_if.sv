@@ -16,7 +16,7 @@ interface i2c_agent_if#(parameter BYTE_SIZE = 8,
   import uvm_pkg::*;
   `include "uvm_macros.svh"
 
-  // Maximum frequency of I2C IF is 1.7 MHz
+  // Maximum frequency of I2C IF is 1 MHz
   localparam realtime T_FM_PLUS = 1000ns;
 
   // Logic array for the clocks
@@ -110,6 +110,7 @@ interface i2c_agent_if#(parameter BYTE_SIZE = 8,
   *     Reads I2C Data 
   ********************************************************/
   task read_sda(output logic [BYTE_SIZE-1:0] i2c_sda);
+    // sda_en <= 0;
     @(cb_scl);
     i2c_sda <= (sda_in===1'bz) ? 1'b1 : sda_in;
   endtask : read_sda
@@ -119,6 +120,7 @@ interface i2c_agent_if#(parameter BYTE_SIZE = 8,
   *     Reads I2C Data
   ********************************************************/
   task read_sda_byte(input logic ack);
+    // sda_en <= 0;
     repeat(BYTE_SIZE) begin
       @(cb_monitor);
     end
