@@ -28,7 +28,7 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
   *************************************************************/
   function new(string name="i2cspibridge_sanity_test_seq");
     super.new(name);
-    `uvm_info("I2CSPIBridge Sanity Test Seq","Constructor Done", UVM_HIGH)
+    `uvm_info("Sanity Test Seq","Constructor Done", UVM_HIGH)
   endfunction : new
 
   /************************************************************
@@ -69,7 +69,7 @@ class i2cspibridge_sanity_test_seq extends i2cspibridge_base_seq;
     // $display("get data = %s",data);
     
     // c_py_final();
-    `uvm_info("I2CSPIBridge Sanity Test Seq","Body Done", UVM_HIGH)
+    `uvm_info("Sanity Test Seq","Body Done", UVM_HIGH)
   endtask : body
 
   

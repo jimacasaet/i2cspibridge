@@ -1,5 +1,5 @@
 //-------------------------------------------------------------
-// Create Date  :   2024-10-09
+// Create Date  :   2024-11-07
 // Author       :   John Rufino Macasaet
 // E-Mail       :   j_macasaet@vtech-inc.co.jp
 // File Name    :   spi_agent_config.svh
@@ -13,11 +13,6 @@ class spi_agent_config extends uvm_component;
 
   // Active/Passive Agent Setting
   protected uvm_active_passive_enum is_active;
-
-  // Agent Synchronous Setting
-  // is_sync=1, Synchronous (i.e. change at clock edge)
-  // is_sync=0, Asynchronous
-  rand logic is_sync;
 
   /************************************************************
   *   FUNCTION: Constructor

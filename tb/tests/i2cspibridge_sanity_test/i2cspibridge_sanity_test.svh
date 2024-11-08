@@ -43,12 +43,12 @@ class i2cspibridge_sanity_test extends i2cspibridge_base_test;
     sanity_test_seq.m_cfg = m_cfg;
 
     // Start test and raise objection
-    `uvm_info("I2CSPIBRIDGE Sanity Test", "Starting Test...", UVM_LOW)
+    `uvm_info("Sanity Test", "Starting Test...", UVM_LOW)
     phase.raise_objection(this);
       // Randomize the test sequence
       assert(sanity_test_seq.randomize())
       else
-        `uvm_error("I2CSPIBRIDGE Sanity Test", "Failed to randomize sequence")
+        `uvm_error("Sanity Test", "Failed to randomize sequence")
       // Start Test Seq
       sanity_test_seq.start(t_env.m_vseqr);
     phase.drop_objection(this);

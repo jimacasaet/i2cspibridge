@@ -83,21 +83,25 @@ class i2cspibridge_base_seq extends uvm_sequence;
   *************************************************************/
 
   task send_i2c_start(logic rw);
+    `uvm_info("Stop I2C", $sformatf("Sending I2C Start to I2C Dev = 0x%0h with %0s", TARGET_ADDR, (rw?"READ":"WRITE")), UVM_HIGH)
     send_start_byte_seq.i2c_address = TARGET_ADDR;
     send_start_byte_seq.rw_bit      = rw;
     send_start_byte_seq.start(i2c_seqr);
   endtask : send_i2c_start
 
   task send_i2c_data(logic [I2C_BYTE_SIZE-1:0] data_in);
+    `uvm_info("Write I2C Data", $sformatf("Sending I2C Data = 0x%0h", data_in), UVM_HIGH)
     send_data_byte_seq.i2c_signal = data_in;
     send_data_byte_seq.start(i2c_seqr);
   endtask : send_i2c_data
 
   task send_i2c_stop();
+    `uvm_info("Stop I2C", $sformatf("Sending I2C Stop Condition"), UVM_HIGH)
     send_stop_seq.start(i2c_seqr);
   endtask : send_i2c_stop
 
   task read_i2c_data(logic ack);
+    `uvm_info("Read I2C", $sformatf("Reading I2C with %0s",(ack?"ACK":"NACK")), UVM_HIGH)
     read_byte_seq.i2c_ack = ack;
     read_byte_seq.start(i2c_seqr);
   endtask : read_i2c_data
@@ -106,12 +110,13 @@ class i2cspibridge_base_seq extends uvm_sequence;
     send_repeated_start_seq.i2c_address = TARGET_ADDR;
     send_repeated_start_seq.rw_bit      = rw;
     send_repeated_start_seq.start(i2c_seqr);
+    `uvm_info("Send I2C RS", $sformatf("Sent I2C Repeated Start"), UVM_HIGH)
   endtask : send_i2c_repeated_start
 
   task change_scl_freq(i2c_freq_e T_SCL);
     set_clock_seq.clock_sel[CLK_CLK]    = 0;
     set_clock_seq.clock_init[CLK_CLK]   = 1;
-    set_clock_seq.clock_period[CLK_CLK] = T_SCL;
+    set_clock_seq.clock_period[CLK_CLK] = T_CLK;
     set_clock_seq.phase_shift[CLK_CLK]  = 0;
     set_clock_seq.duty_cycle[CLK_CLK]   = 50;
 
@@ -121,6 +126,7 @@ class i2cspibridge_base_seq extends uvm_sequence;
     set_clock_seq.phase_shift[CLK_SCL]  = 0;
     set_clock_seq.duty_cycle[CLK_SCL]   = 50;
     set_clock_seq.start(clock_seqr);
+    `uvm_info("Change SCL Freq", $sformatf("Changed the I2C Clock Period to %0d", T_SCL), UVM_HIGH)
   endtask : change_scl_freq
   
 endclass : i2cspibridge_base_seq
