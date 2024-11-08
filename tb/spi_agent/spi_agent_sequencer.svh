@@ -1,5 +1,5 @@
 //-------------------------------------------------------------
-// Create Date  :   2024-10-09
+// Create Date  :   2024-11-07
 // Author       :   John Rufino Macasaet
 // E-Mail       :   j_macasaet@vtech-inc.co.jp
 // File Name    :   spi_agent_sequencer.svh
@@ -9,7 +9,7 @@
   `define _SPI_AGENT_SEQUENCER_SVH
 
 class spi_agent_sequencer#(
-    type SEQ_ITEM_T = spi_agent_seq_item#(1, 1)
+    type SEQ_ITEM_T = spi_agent_seq_item#(8)
   ) extends uvm_sequencer#(SEQ_ITEM_T);
 
   `uvm_component_param_utils(spi_agent_sequencer#(SEQ_ITEM_T))

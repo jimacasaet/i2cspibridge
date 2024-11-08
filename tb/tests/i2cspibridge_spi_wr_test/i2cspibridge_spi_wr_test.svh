@@ -1,9 +1,9 @@
 //-------------------------------------------------------------
-// Create Date  :   2024-10-09
+// Create Date  :   2024-10-25
 // Author       :   John Rufino Macasaet
 // E-Mail       :   j_macasaet@vtech-inc.co.jp
 // File Name    :   i2cspibridge_spi_wr_test.svh
-// Description  :   I2C-SPI Bridge Sanity Test
+// Description  :   I2C-SPI Bridge SPI Write Test
 //-------------------------------------------------------------
 `ifndef _I2CSPIBRIDGE_SPI_WR_TEST_SVH
   `define _I2CSPIBRIDGE_SPI_WR_TEST_SVH
@@ -43,12 +43,12 @@ class i2cspibridge_spi_wr_test extends i2cspibridge_base_test;
     spi_wr_test_seq.m_cfg = m_cfg;
 
     // Start test and raise objection
-    `uvm_info("I2CSPIBRIDGE Sanity Test", "Starting Test...", UVM_LOW)
+    `uvm_info("SPI Write Test", "Starting Test...", UVM_LOW)
     phase.raise_objection(this);
       // Randomize the test sequence
       assert(spi_wr_test_seq.randomize())
       else
-        `uvm_error("I2CSPIBRIDGE Sanity Test", "Failed to randomize sequence")
+        `uvm_error("SPI Write Test", "Failed to randomize sequence")
       // Start Test Seq
       spi_wr_test_seq.start(t_env.m_vseqr);
     phase.drop_objection(this);

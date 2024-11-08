@@ -1,5 +1,5 @@
 //-------------------------------------------------------------
-// Create Date  :   2024-10-09
+// Create Date  :   2024-11-07
 // Author       :   John Rufino Macasaet
 // E-Mail       :   j_macasaet@vtech-inc.co.jp
 // File Name    :   spi_agent.svh
@@ -9,21 +9,20 @@
   `define _SPI_AGENT_SVH
 
 class spi_agent#(
-    parameter SIGNAL_WIDTH = 1,
-    parameter N_SIGNAL     = 1,
-    type      SEQ_ITEM_T   = spi_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL)
+    parameter BYTE_WIDTH = 8,
+    type      SEQ_ITEM_T   = spi_agent_seq_item#(BYTE_WIDTH)
   ) extends uvm_agent;
 
   // Register to factory
-  `uvm_component_param_utils(spi_agent#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T))
+  `uvm_component_param_utils(spi_agent#(BYTE_WIDTH, SEQ_ITEM_T))
 
   // Instantiate config
   spi_agent_config  m_cfg;
 
   // Create component typedefs
-  typedef spi_agent_driver#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T)   driver_t;
-  typedef spi_agent_sequencer #(SEQ_ITEM_T)                       seqr_t;  
-  typedef spi_agent_monitor#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T)  monitor_t;
+  typedef spi_agent_driver#(BYTE_WIDTH, SEQ_ITEM_T)   driver_t;
+  typedef spi_agent_sequencer #(SEQ_ITEM_T)           seqr_t;  
+  typedef spi_agent_monitor#(BYTE_WIDTH, SEQ_ITEM_T)  monitor_t;
 
   // Instantiate components
   driver_t                        m_driver;  

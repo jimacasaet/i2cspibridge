@@ -16,6 +16,7 @@ module tb_i2cspibridge();
   // Import Agent Packages
   import clock_agent_pkg::*;
   import gpio_agent_pkg::*;
+  import spi_agent_pkg::*;
 
   import i2cspibridge_uvm_pkg::*;
   import i2cspibridge_test_pkg::*;
@@ -55,6 +56,10 @@ module tb_i2cspibridge();
     .sda( sda )
   );
 
+  spi_agent_if #(
+    .BYTE_WIDTH(I2C_BYTE_SIZE)
+  ) m_spi_vif ( .sclk(SCLK_w) );
+
   //###########################################
   //  Set the VIF using uvm_config_db
   //###########################################
@@ -77,14 +82,20 @@ module tb_i2cspibridge();
   initial begin
     `ifdef VCS 
       begin
-        // `uvm_info("TB", "Using VCS Compiler", UVM_NONE);
+        `uvm_info("TB", "Using VCS Compiler", UVM_NONE)
         $vcdplusfile("i2cspibridge_dump.vpd");
         $vcdpluson();
         $vcdplusmemon();
       end 
+    `elsif XCELIUM
+      begin
+        `uvm_info("TB", "Using Xcelium Compiler", UVM_NONE)
+        $recordfile("i2cspibridge_dump.trn");
+        $recordvars();
+      end
     `else 
       begin
-        // `uvm_info("TB", "Using Other Compiler", UVM_NONE);
+        `uvm_info("TB", "Using Other Compiler", UVM_NONE)
         $dumpfile("i2cspibridge_dump.vcd");
         $dumpvars();
       end

@@ -1,5 +1,5 @@
 //-------------------------------------------------------------
-// Create Date  :   2024-10-09
+// Create Date  :   2024-11-07
 // Author       :   John Rufino Macasaet
 // E-Mail       :   j_macasaet@vtech-inc.co.jp
 // File Name    :   spi_agent_driver.svh
@@ -9,15 +9,14 @@
   `define _SPI_AGENT_DRIVER_SVH
 
 class spi_agent_driver#(
-    parameter SIGNAL_WIDTH = 1,
-    parameter N_SIGNAL     = 1,
-    type      SEQ_ITEM_T   = spi_agent_seq_item#(SIGNAL_WIDTH, N_SIGNAL)
+    parameter BYTE_WIDTH = 1,
+    type      SEQ_ITEM_T = spi_agent_seq_item#(BYTE_WIDTH)
   ) extends uvm_driver#(SEQ_ITEM_T);
   // Register to the factory
-  `uvm_component_param_utils(spi_agent_driver#(SIGNAL_WIDTH, N_SIGNAL, SEQ_ITEM_T))
+  `uvm_component_param_utils(spi_agent_driver#(BYTE_WIDTH, SEQ_ITEM_T))
 
   // Handle to the virtual interface
-  virtual spi_agent_if#(SIGNAL_WIDTH, N_SIGNAL) m_vif;
+  virtual spi_agent_if#(BYTE_WIDTH) m_vif;
 
   // Handle to the config object
   spi_agent_config             m_cfg;
@@ -44,7 +43,7 @@ class spi_agent_driver#(
     `uvm_info("SPI Agent Driver", "Starting Start of Sim Phase", UVM_DEBUG)
 
     // Retrieve the virtual interface
-    assert(uvm_config_db#(virtual spi_agent_if#(SIGNAL_WIDTH, N_SIGNAL))
+    assert(uvm_config_db#(virtual spi_agent_if#(BYTE_WIDTH))
       ::get(this, "", "spi_agent_if", m_vif))
     else  
       `uvm_fatal("SPI Agent Driver", "Unable to retrieve SPI VIF!")

@@ -35,6 +35,15 @@ class i2cspibridge_config_seq extends i2cspibridge_base_seq;
   ****************************/
   logic [1:0]     spi_cfg;
 
+  /********* Allow Multiple SS **************
+  * Setting for allowing selection of
+  * multiple SPI peripherals.
+  *
+  *   multiple_ss = 'b1: Allow multiple SS
+  *   multiple_ss = 'b0: Allow one SS only (default)
+  */
+  logic           multiple_ss;
+
   /************************************************************
   *   FUNCTION: Constructor
   *************************************************************/
@@ -42,6 +51,7 @@ class i2cspibridge_config_seq extends i2cspibridge_base_seq;
     super.new(name);
     dest    = 0;
     spi_cfg = 0;
+    multiple_ss = 0;
   endfunction : new
 
   /************************************************************
@@ -66,15 +76,26 @@ class i2cspibridge_config_seq extends i2cspibridge_base_seq;
       // If destination is SS0, write to RegMap=0x02 with value ADR_SS0
       `uvm_info("I2CSPIBridge Config Seq", "Configured to write to ADR_SS0", UVM_HIGH)
       send_i2c_data(ADR_SS0);
+      // If multiple peripherals not allowed, clear uadr for SS1 and SS2
+      if(!multiple_ss) begin
+        repeat(2) send_i2c_data(8'h00);
+      end
     end else if(dest==DEST_SS1||dest==DEST_SS2) begin
       // If destination is SS1 or SS2, send stop and reissue write command
       // to the appropriate address with the correct uadr value
       `uvm_info("I2CSPIBridge Config Seq", $sformatf("Configured to write to %s", (dest==DEST_SS1 ? "DEST_SS1" : "DEST_SS2") ), UVM_HIGH)
-      send_i2c_stop();
-      send_i2c_start(1'b0);
-      send_i2c_data( ( dest==DEST_SS1 ? 8'h03 : 8'h04) );
-      send_i2c_data( ( dest==DEST_SS1 ? 8'h80 : 8'hC0) );
-      send_i2c_stop();
+
+      if(multiple_ss) begin
+        send_i2c_stop();
+        send_i2c_start(1'b0);
+        send_i2c_data( (dest==DEST_SS1 ? 8'h03 : 8'h04) );
+        send_i2c_data( (dest==DEST_SS1 ? 8'h80 : 8'hC0) );
+        send_i2c_stop();
+      end else begin
+        send_i2c_data(  8'h00                           );  // UADR0
+        send_i2c_data( (dest==DEST_SS1 ? 8'h80 : 8'h00) );  // UADR1
+        send_i2c_data( (dest==DEST_SS2 ? 8'hC0 : 8'h00) );  // UADR2
+      end
     end else begin
       `uvm_error("I2CSPIBridge Config Seq", "Invalid destination!")
     end
