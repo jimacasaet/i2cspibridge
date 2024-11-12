@@ -43,6 +43,9 @@ class i2cspibridge_base_seq extends uvm_sequence;
   i2c_agent_send_rs_seq   #(I2C_BYTE_SIZE,
                             I2C_ADDR_SIZE,
                             i2c_seq_item_t)   send_repeated_start_seq;
+  
+  gpio_agent_set_seq      #(RESET_WIDTH, 
+                            N_RESET)          set_reset_seq;
 
   /************************************************************
   *   FUNCTION: Constructor
@@ -69,6 +72,8 @@ class i2cspibridge_base_seq extends uvm_sequence;
                             ::type_id::create("read_byte_seq");
     send_repeated_start_seq = i2c_agent_send_rs_seq#(I2C_BYTE_SIZE, I2C_ADDR_SIZE, i2c_seq_item_t)
                             ::type_id::create("send_repeated_start_seq");
+    set_reset_seq      = gpio_agent_set_seq#(RESET_WIDTH, N_RESET)
+                            ::type_id::create("set_reset_seq");
 
     // Connect sub-sequencer instances to p_sequencer 
     clock_seqr = p_sequencer.clock_seqr;
@@ -79,7 +84,7 @@ class i2cspibridge_base_seq extends uvm_sequence;
   endtask : body
 
   /************************************************************
-  *   Common I2C Tasks
+  *   Common Tasks
   *************************************************************/
 
   task send_i2c_start(logic rw);
@@ -128,6 +133,18 @@ class i2cspibridge_base_seq extends uvm_sequence;
     set_clock_seq.start(clock_seqr);
     `uvm_info("Change SCL Freq", $sformatf("Changed the I2C Clock Period to %0d", T_SCL), UVM_HIGH)
   endtask : change_scl_freq
+
+  task trigger_reset();
+    `uvm_info("Trigger Reset", "Triggering Reset...", UVM_MEDIUM)
+    set_reset_seq.gpio_signal[RST_N] = 1'b0;
+    set_reset_seq.start(reset_seqr);
+  endtask : trigger_reset
+
+  task release_reset();
+    `uvm_info("Release Reset", "Releasing Reset...", UVM_MEDIUM)
+    set_reset_seq.gpio_signal[RST_N] = 1'b1;
+    set_reset_seq.start(reset_seqr);
+  endtask : release_reset
   
 endclass : i2cspibridge_base_seq
 
