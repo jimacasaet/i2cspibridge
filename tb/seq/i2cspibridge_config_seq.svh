@@ -50,6 +50,7 @@ class i2cspibridge_config_seq extends i2cspibridge_base_seq;
   function new(string name="i2cspibridge_config_seq");
     super.new(name);
     dest    = 0;
+    spi_clk = 0;
     spi_cfg = 0;
     multiple_ss = 0;
   endfunction : new

@@ -26,7 +26,7 @@ module tb_i2cspibridge();
 
   // Instantiate tb config
   i2cspibridge_config   m_cfg;
-  wire sda;
+  wire SDA_w;
 
   // Temporary wires until SPI Agent is created
   wire SCLK_w, MOSI_w, MISO_w;
@@ -53,7 +53,7 @@ module tb_i2cspibridge();
     .ADDR_SIZE(I2C_ADDR_SIZE)
   ) m_i2c_vif (
     .scl(m_clock_vif.clk[CLK_SCL]),
-    .sda( sda )
+    .sda( SDA_w )
   );
 
   spi_agent_if #(
@@ -72,6 +72,9 @@ module tb_i2cspibridge();
 
     uvm_config_db #(virtual i2c_agent_if#(I2C_BYTE_SIZE, I2C_ADDR_SIZE))::
       set(null, "uvm_test_top.t_env.m_i2c_agent.*", "i2c_agent_if", m_i2c_vif);
+
+    uvm_config_db #(virtual spi_agent_if#(I2C_BYTE_SIZE))::
+      set(null, "uvm_test_top.t_env.*", "spi_agent_if", m_spi_vif);
     
     run_test();
   end // initial begin
@@ -121,13 +124,13 @@ module tb_i2cspibridge();
     .CLK  ( m_clock_vif.clk[CLK_CLK]      ),
     .RST_N( m_reset_vif.gpio_signal[RST_N]),
     .SCL  ( m_clock_vif.clk[CLK_SCL]      ),
-    .SDA  ( sda ),
+    .SDA  ( SDA_w          ),
     .MISO ( MISO_w ),
-    .SCLK ( SCLK_w ),
+    .SCLK ( SCLK_w         ),
     .MOSI ( MOSI_w ),
-    .SS0  ( SS0_w ),
-    .SS1  ( SS1_w ),
-    .SS2  ( SS2_w )
+    .SS0  ( m_spi_vif.ss0  ),
+    .SS1  ( m_spi_vif.ss1  ),
+    .SS2  ( m_spi_vif.ss2  )
   );
 
   //###########################################
