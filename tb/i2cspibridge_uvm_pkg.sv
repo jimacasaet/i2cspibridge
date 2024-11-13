@@ -15,6 +15,7 @@ package i2cspibridge_uvm_pkg;
   import gpio_agent_pkg::*;
   import i2c_agent_pkg::*;
   import spi_agent_pkg::*;
+  import i2cspibridge_uvm_regmodel_pkg::*;
 
   // TODO: DPI
   // import "DPI-C" function void c_py_init();

@@ -11,9 +11,13 @@
 class i2cspibridge_config extends uvm_component;
   `uvm_component_param_utils(i2cspibridge_config)
 
+  // RegModel Handle
+  i2cspibridge_uvm_reg_block  m_rm;
+
   // Configuration Variables
   rand bit has_scoreboard;
   rand bit has_coverage;
+  rand bit has_regmodel;
 
   rand bit has_clock_agent;
   rand bit has_reset_agent;
@@ -25,6 +29,7 @@ class i2cspibridge_config extends uvm_component;
     // Env Constraints
     soft has_scoreboard   == 1;
     soft has_coverage     == 1;
+    soft has_regmodel     == 1;
     // Agent Constraints
     soft has_clock_agent  == 1;
     soft has_reset_agent  == 1;
