@@ -10,6 +10,8 @@
 // SPI Agent 
 ../tb/spi_agent/spi_agent_pkg.sv
 ../tb/spi_agent/spi_agent_if.sv
+// Regmodel
+../tb/regmodel/i2cspibridge_uvm_regmodel_pkg.sv
 // TB 
 ../tb/i2cspibridge_uvm_pkg.sv
 ../tb/tests/i2cspibridge_test_pkg.sv
@@ -27,3 +29,4 @@
 +incdir+../tb/i2c_agent/seq/
 +incdir+../tb/spi_agent/
 +incdir+../tb/spi_agent/seq/
++incdir+../tb/regmodel/

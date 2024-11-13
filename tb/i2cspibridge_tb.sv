@@ -128,9 +128,9 @@ module tb_i2cspibridge();
     .MISO ( MISO_w ),
     .SCLK ( SCLK_w         ),
     .MOSI ( MOSI_w ),
-    .SS0  ( m_spi_vif.ss0  ),
-    .SS1  ( m_spi_vif.ss1  ),
-    .SS2  ( m_spi_vif.ss2  )
+    .SS0  ( SS0_w ),
+    .SS1  ( SS1_w  ),
+    .SS2  ( SS2_w  )
   );
 
   //###########################################

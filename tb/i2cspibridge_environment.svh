@@ -36,6 +36,11 @@ class i2cspibridge_environment extends uvm_env;
   gpio_agent_config       m_reset_agent_cfg;
   i2c_slave_agent_config  m_i2c_agent_cfg;
 
+  // Register Model and Predictor
+  i2cspibridge_uvm_reg_block              m_rm;           // Register Model
+  // i2c_agent_adapter                       m_i2c_adapter;  // Adapter
+  uvm_reg_predictor#(i2c_agent_seq_item)  m_i2c_predictor;// Predictor
+
   /******************************************************************************
   *   FUNCTION: Constructor
   ******************************************************************************/
@@ -103,6 +108,16 @@ class i2cspibridge_environment extends uvm_env;
       uvm_config_db#(i2c_slave_agent_config)
         ::set(this, "m_i2c_agent", "i2c_slave_agent_config", m_i2c_agent_cfg);
       `uvm_info("I2CSPIBRIDGE Env", "I2C Agent Config Set", UVM_HIGH)
+    end
+
+    // Build RegModel if defined in config
+    if(m_cfg.has_regmodel) begin
+      m_rm = i2cspibridge_uvm_reg_block::type_id::create("m_rm");
+      m_rm.build();
+      m_rm.reset();
+      m_rm.lock_model();
+      
+      m_cfg.m_rm = m_rm;
     end
 
     // Build Scoreboard if defined in config
