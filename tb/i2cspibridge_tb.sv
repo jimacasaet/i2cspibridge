@@ -125,12 +125,12 @@ module tb_i2cspibridge();
     .RST_N( m_reset_vif.gpio_signal[RST_N]),
     .SCL  ( m_clock_vif.clk[CLK_SCL]      ),
     .SDA  ( SDA_w          ),
-    .MISO ( MISO_w ),
+    .MISO ( m_spi_vif.miso ),
     .SCLK ( SCLK_w         ),
-    .MOSI ( MOSI_w ),
-    .SS0  ( SS0_w ),
-    .SS1  ( SS1_w  ),
-    .SS2  ( SS2_w  )
+    .MOSI ( m_spi_vif.mosi),
+    .SS0  ( m_spi_vif.ss0 ),
+    .SS1  ( m_spi_vif.ss1 ),
+    .SS2  ( m_spi_vif.ss2 )
   );
 
   //###########################################
@@ -143,7 +143,7 @@ module tb_i2cspibridge();
     .RST_N( m_reset_vif.gpio_signal[RST_N]),
     .SCLK ( SCLK_w ),
     .MOSI ( MOSI_w ),
-    .SS   ( SS0_w  ),
+    .SS   ( m_spi_vif.ss0  ),
     .MISO ( MISO_w )
   );
 
@@ -153,7 +153,7 @@ module tb_i2cspibridge();
     .RST_N( m_reset_vif.gpio_signal[RST_N]),
     .SCLK ( SCLK_w ),
     .MOSI ( MOSI_w ),
-    .SS   ( SS1_w  ),
+    .SS   ( m_spi_vif.ss1   ),
     .MISO ( MISO_w )
   );
 
@@ -163,7 +163,7 @@ module tb_i2cspibridge();
     .RST_N( m_reset_vif.gpio_signal[RST_N]),
     .SCLK ( SCLK_w ),
     .MOSI ( MOSI_w ),
-    .SS   ( SS2_w  ),
+    .SS   ( m_spi_vif.ss2  ),
     .MISO ( MISO_w )
   );
 endmodule : tb_i2cspibridge

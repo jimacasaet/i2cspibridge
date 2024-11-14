@@ -32,13 +32,13 @@ interface spi_agent_if#(
   clocking cb_driver_pos@(posedge sclk);
     default input #0 output #0;
     input miso;
-    output mosi, ss0, ss1, ss2;
+    output mosi;
   endclocking : cb_driver_pos
 
   clocking cb_driver_neg@(negedge sclk);
     default input #0 output #0;
     input miso;
-    output mosi, ss0, ss1, ss2;
+    output mosi;
   endclocking : cb_driver_neg
 
   clocking cb_mon_pos@(posedge sclk);
@@ -51,26 +51,56 @@ interface spi_agent_if#(
     input miso, mosi, ss0, ss1, ss2;
   endclocking : cb_mon_neg
 
+  // Initialize SPI Mode to 'b00
+  initial begin
+    cpol = 0;
+    cpha = 0;
+  end
+
+  // Clock sampling depending on SPI Mode
+  task clock_edge();
+    if(!cpha) begin
+      if(!cpol)
+        @(cb_driver_pos);
+      else
+        @(cb_driver_neg);
+    end else begin
+      if(!cpol)
+        @(cb_driver_neg);
+      else
+        @(cb_driver_pos);
+    end
+  endtask : clock_edge
+
   /***************************************************
   *   TASK: Write SPI Byte to the Bus
   *   
   ***************************************************/
-  task write_mosi(input [BYTE_WIDTH-1:0] write_data);
-
-  endtask : write_mosi
+  task write_miso(input [BYTE_WIDTH-1:0] write_data);
+    foreach(write_data[i]) begin
+      clock_edge();
+      miso <= write_data[i];
+    end
+  endtask : write_miso
 
   /***************************************************
   *   TASK: Read SPI Byte to the Bus
   ***************************************************/
   task read_mosi(output [BYTE_WIDTH-1:0] read_data);
-
+    foreach(read_data[i]) begin
+      clock_edge();
+      read_data[i] <= mosi;
+    end
   endtask : read_mosi
 
   /***************************************************
   *   TASK: Read SPI Byte to the Bus
   ***************************************************/
   task read_miso(output [BYTE_WIDTH-1:0] read_data);
-
+    foreach(read_data[i]) begin
+      clock_edge();
+      read_data[i] <= miso;
+    end
   endtask : read_miso
 
   /***************************************************

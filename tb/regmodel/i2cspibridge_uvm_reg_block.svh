@@ -29,7 +29,7 @@ class i2cspibridge_cfg extends uvm_reg_block;
     spi_clk = i2cspibridge_cfg_spi_clk::type_id::create("spi_clk");
     spi_clk.configure(this, null);
     spi_clk.build();
-    default_map.add_reg(.rg      (spi_clk), 
+    default_map.add_reg(     .rg      (spi_clk), 
                              .offset  (`UVM_REG_ADDR_WIDTH'h0), 
                              .rights  ("RW"), 
                              .unmapped(0)
@@ -39,7 +39,7 @@ class i2cspibridge_cfg extends uvm_reg_block;
     spi_cfg = i2cspibridge_cfg_spi_cfg::type_id::create("spi_cfg");
     spi_cfg.configure(this, null);
     spi_cfg.build();
-    default_map.add_reg(.rg      (spi_cfg), 
+    default_map.add_reg(     .rg      (spi_cfg), 
                              .offset  (`UVM_REG_ADDR_WIDTH'h1), 
                              .rights  ("RW"), 
                              .unmapped(0)
@@ -50,7 +50,7 @@ class i2cspibridge_cfg extends uvm_reg_block;
       uadr_ss[i] = i2cspibridge_cfg_uadr_ss::type_id::create($sformatf("uadr_ss%0d",i));
       uadr_ss[i].configure(this, null);
       uadr_ss[i].build();
-      default_map.add_reg(.rg      (uadr_ss[i]), 
+      default_map.add_reg(     .rg      (uadr_ss[i]), 
                                .offset  (`UVM_REG_ADDR_WIDTH'h2 + i), 
                                .rights  ("RW"), 
                                .unmapped(0)
@@ -62,7 +62,7 @@ class i2cspibridge_cfg extends uvm_reg_block;
       free[i] = i2cspibridge_cfg_free::type_id::create($sformatf("free_%0d",i));
       free[i].configure(this, null);
       free[i].build();
-      default_map.add_reg(.rg      (free[i]), 
+      default_map.add_reg(     .rg      (free[i]), 
                                .offset  (`UVM_REG_ADDR_WIDTH'h5 + i), 
                                .rights  ("RW"), 
                                .unmapped(0)
@@ -81,10 +81,16 @@ class i2cspibridge_ss extends uvm_reg_block;
 
   rand i2cspibridge_cfg_free data[64];
 
+  /*****************************************************
+  *   FUNCTION: New
+  *****************************************************/
   function new(string name="");
     super.new(name, UVM_NO_COVERAGE);
   endfunction : new
 
+  /*****************************************************
+  *   FUNCTION: Build
+  *****************************************************/
   virtual function void build();
     default_map = create_map("", 0, 64, UVM_LITTLE_ENDIAN, 0);
 
@@ -92,7 +98,7 @@ class i2cspibridge_ss extends uvm_reg_block;
       data[i] = i2cspibridge_cfg_free::type_id::create($sformatf("data_%0d",i));
       data[i].configure(this, null);
       data[i].build();
-      default_map.add_reg(.rg      (data[i]), 
+      default_map.add_reg(     .rg      (data[i]), 
                                .offset  (`UVM_REG_ADDR_WIDTH'h0 + i), 
                                .rights  ("RW"), 
                                .unmapped(0)
@@ -112,10 +118,16 @@ class i2cspibridge_uvm_reg_block extends uvm_reg_block;
 
   `uvm_object_param_utils(i2cspibridge_uvm_reg_block)
 
+  /*****************************************************
+  *   FUNCTION: New
+  *****************************************************/
   function new(string name="i2cspibridge_uvm_reg_block");
     super.new(name);
   endfunction : new
 
+  /*****************************************************
+  *   FUNCTION: Build
+  *****************************************************/
   function void build();
     
     default_map = create_map("", 0, 64, UVM_LITTLE_ENDIAN, 0);
@@ -131,6 +143,18 @@ class i2cspibridge_uvm_reg_block extends uvm_reg_block;
     ss0.configure(this);
     ss0.build();
     default_map.add_submap(ss0.default_map, `UVM_REG_ADDR_WIDTH'h40);
+
+    // SS1 0x80-0xBF
+    ss1        = i2cspibridge_ss::type_id::create("ss1");
+    ss1.configure(this);
+    ss1.build();
+    default_map.add_submap(ss1.default_map, `UVM_REG_ADDR_WIDTH'h80);
+
+    // SS2 0x80-0xBF
+    ss2        = i2cspibridge_ss::type_id::create("ss2");
+    ss2.configure(this);
+    ss2.build();
+    default_map.add_submap(ss2.default_map, `UVM_REG_ADDR_WIDTH'hC0);
   endfunction : build
 endclass : i2cspibridge_uvm_reg_block
 
