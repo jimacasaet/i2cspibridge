@@ -118,6 +118,9 @@ class i2cspibridge_environment extends uvm_env;
       m_rm.lock_model();
       
       m_cfg.m_rm = m_rm;
+
+      uvm_config_db#(i2cspibridge_uvm_reg_block)::set(this, "*", "i2cspibridge_uvm_reg_block", m_rm);
+      `uvm_info("I2CSPIBRIDGE Env", "Built and Setup Register Model", UVM_HIGH)
     end
 
     // Build Scoreboard if defined in config
