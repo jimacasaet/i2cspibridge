@@ -26,6 +26,7 @@ package i2c_agent_pkg;
   `include "i2c_agent_seq_item.svh"
   `include "i2c_agent_sequencer.svh"
   `include "i2c_agent_monitor.svh"
+  `include "i2c_agent_reg_adapter.svh"
   // `include "i2c_master_agent_driver.svh"
   // `include "i2c_master_agent_config.svh"
   // `include "i2c_master_agent.svh"

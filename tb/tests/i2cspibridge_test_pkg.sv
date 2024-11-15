@@ -14,12 +14,16 @@ package i2cspibridge_test_pkg;
   `include "i2cspibridge_spi_wr_test/i2cspibridge_spi_wr_test_seq.svh"
   `include "i2cspibridge_spi_rd_test/i2cspibridge_spi_rd_test_seq.svh"
   `include "i2cspibridge_regmap_wr_test/i2cspibridge_regmap_wr_test_seq.svh"
+  `include "i2cspibridge_regmap_rd_test/i2cspibridge_regmap_rd_test_seq.svh"
+  `include "i2cspibridge_sr_test/i2cspibridge_sr_test_seq.svh"
 
   // Tests
   `include "i2cspibridge_sanity_test/i2cspibridge_sanity_test.svh"
   `include "i2cspibridge_spi_wr_test/i2cspibridge_spi_wr_test.svh"
   `include "i2cspibridge_spi_rd_test/i2cspibridge_spi_rd_test.svh"
   `include "i2cspibridge_regmap_wr_test/i2cspibridge_regmap_wr_test.svh"
+  `include "i2cspibridge_regmap_rd_test/i2cspibridge_regmap_rd_test.svh"
+  `include "i2cspibridge_sr_test/i2cspibridge_sr_test.svh"
 
 endpackage : i2cspibridge_test_pkg
 
