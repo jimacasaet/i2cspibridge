@@ -9,7 +9,7 @@ TOOL := vcs
 VCS_CFLAG := -CC $(shell pkg-config --cflags python3) -CC -I$(C_INC) -CC -D'PYTHON_PATH=\"$(PYTHON_PATH)\"'
 VCS_LDFLAG := -LDFLAGS -Wl,--no-as-needed -LDFLAGS $(shell pkg-config --libs python3)
 
-all: clean compile_uvm run_sim
+all: clean compile_uvm run_batch
 
 compile_uvm:
 ifeq ($(TOOL), vcs)
